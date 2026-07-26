@@ -233,7 +233,7 @@ export const projects: Project[] = [
       ],
       results: [
         '路由准确率 88%→95%，知识库检索准确率 87%，单 Agent 5–15s，Swarm 20–30s，多轮对话理解准确率 60%→92%',
-        '医学专业人员三维度盲评：系统 4.5 分 vs doubao-seed-2.0-pro 3.9 分',
+        '500 条独立测试集（4 大类各 125 条：日常咨询/症状诊断/疾病查询/指南检索），医学专业人员准确性·完整性·安全性三维度盲评：系统 4.5 分 vs doubao-seed-2.0-pro 3.9 分',
         'VLM 平均得分 0.58→0.78（+34%），AB test 0.78 vs DeepSeek 0.72 / Doubao 0.75，推理 2–5s/次，可用性 99.8%',
         '约束系统自动修复率 100%（免责声明/就医警告零遗漏），格式完整率 100%，主力模态识别 90–100%',
       ],
@@ -254,7 +254,7 @@ export const projects: Project[] = [
             {
               aspect: 'Skills-Agent 解耦架构',
               before: '工具逻辑与 Agent 代码硬耦合，新增一个能力（如 ICD-10 编码）需修改 3 个 Agent',
-              after: '7 个原子 Skills 独立封装（每个含 SKILL.md + Python 脚本），pkgutil 自动发现 → importlib 按需加载 → 注册为 OpenAI Function Tool。Agent 只关心"调用哪个 Skill"，不关心 Skill 内部实现',
+              after: '7 个原子 Skills 独立封装（每个含 SKILL.md + Python 脚本），pkgutil 自动发现 → importlib 按需加载 → 注册为 OpenAI Function Tool。具体分工：①search_knowledge 通用医学检索 ②assess_risk 症状紧急度判断(规则引擎+知识库双验证) ③analyze_symptoms 症状关联分析(涉及身体系统识别) ④recommend_lifestyle 饮食/运动/睡眠/用药四维建议 ⑤disease_code ICD-10标准编码 ⑥clinical_guideline 权威诊疗指南 ⑦deep_research 网络搜索+证据综合。Agent 只关心"调用哪个 Skill"，不关心 Skill 内部实现',
               reason: '医疗领域知识更新频繁（指南/编码/研究），Skill 架构让知识更新无需改动 Agent 代码',
             },
             {
@@ -305,6 +305,12 @@ export const projects: Project[] = [
               before: 'Agent 间无通信机制，多 Agent 结果各自独立无法交叉验证',
               after: 'LeadAgent 分解任务→发布 SubTask 到 SharedContext→Worker 自主认领→完成后 write 结果→其他 Worker 可 read 上下文。asyncio.Lock 保护并发写入。发布 Swarm 启动/完成事件',
               reason: '间接通信避免 Agent 间强耦合。Worker 只通过 SharedContext 感知其他 Agent 的存在，不直接调用',
+            },
+            {
+              aspect: '多 Agent 冲突裁决（优先级策略）',
+              before: '多 Agent 并行时可能出现矛盾结论（ConsultationAgent"症状较轻不用担心"，DiagnosticAgent"风险较高建议就医"），LLM 难以判断该信谁',
+              after: '定义 Agent 专业领域和权威级别：风险评估以 DiagnosticAgent 为准，知识科普以 ConsultationAgent 为准，诊疗指南以 ResearchAgent 为准。在 LeadAgent 汇总 prompt 中明确"当出现冲突时，风险评估优先级 DiagnosticAgent > ConsultationAgent"。显著降低矛盾建议出现频率，从初版 12% 降至 <3%',
+              reason: '不同 Agent 的专业领域不同。明确优先级让 LeadAgent 在信息冲突时有据可依，避免"和稀泥"式的折中回答',
             },
             {
               aspect: '引用来源追溯系统',
