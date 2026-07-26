@@ -221,6 +221,22 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
             )}
           </div>
         )}
+
+        {/* Architecture Diagram */}
+        {project.screenshot && (
+          <div className="mt-6 border-t border-gray-100 pt-5 dark:border-slate-700">
+            <h3 className="mb-3 text-sm font-semibold text-gray-500 dark:text-gray-500">
+              系统架构
+            </h3>
+            <div className="overflow-hidden rounded-lg bg-slate-50 dark:bg-slate-950/50">
+              <img
+                src={`/my-website/images/projects/${project.screenshot}`}
+                alt={`${project.title} 系统架构`}
+                className="w-full"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>,
     document.body,
