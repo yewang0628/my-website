@@ -9,33 +9,20 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: 'Fin-MCP 多智能体 A 股分析系统',
+    description:
+      '基于 LangGraph ReAct 框架 + MCP 协议的多 Agent 金融分析系统。4 个专用 Agent（基本面/技术面/估值/新闻）并行分析，自研 Qwen3-8B LoRA 新闻情感与风险预测模型（准确率 91%/88%），覆盖 A 股 5000+ 股票，工具调用成功率 98%，端到端时延约 90 秒。',
+    tags: ['LangGraph', 'MCP', 'Qwen3', 'LoRA', 'vLLM', 'React', 'FastAPI'],
+    screenshot: 'fin-mcp.svg',
+    githubUrl: 'https://github.com/yewang0628/Fin-MCP',
+  },
+  {
     title: 'My Website',
-    description: '个人品牌站，React 19 + Vite + Tailwind CSS v4 构建，科技粒子风格。',
+    description:
+      '个人品牌站，React 19 + Vite 7 + TypeScript + Tailwind CSS v4 构建，科技粒子风格，支持亮/暗主题切换，GitHub Pages 部署。',
     tags: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
     screenshot: 'my-website.svg',
     githubUrl: 'https://github.com/yewang0628/my-website',
-    liveUrl: 'https://wangye.github.io/my-website/',
-  },
-  {
-    title: 'Project Alpha',
-    description: '全栈 Web 应用，前后端分离架构。',
-    tags: ['Node.js', 'Express', 'PostgreSQL'],
-    screenshot: 'project-alpha.svg',
-    githubUrl: 'https://github.com/yewang0628/project-alpha',
-  },
-  {
-    title: 'CLI Tool',
-    description: '命令行效率工具，自动化日常开发任务。',
-    tags: ['Rust', 'CLI'],
-    screenshot: 'cli-tool.svg',
-    githubUrl: 'https://github.com/yewang0628/cli-tool',
-    liveUrl: 'https://www.npmjs.com/package/cli-tool',
-  },
-  {
-    title: 'Component Library',
-    description: '可复用的 React 组件库，支持 Tree Shaking 和按需加载。',
-    tags: ['React', 'Storybook', 'Rollup'],
-    screenshot: 'component-lib.svg',
-    githubUrl: 'https://github.com/yewang0628/component-lib',
+    liveUrl: 'https://yewang0628.github.io/my-website/',
   },
 ]

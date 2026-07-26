@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="400" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B0D17"/>
+      <stop offset="1" stop-color="#1A1040"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F0B93E"/>
+      <stop offset="1" stop-color="#D4931E"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#0891B2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" rx="12" fill="url(#bg)"/>
+
+  <!-- Central hub node -->
+  <circle cx="200" cy="150" r="28" fill="url(#gold)" opacity="0.9"/>
+  <text x="200" y="156" text-anchor="middle" fill="#0B0D17" font-size="14" font-weight="bold" font-family="monospace">MCP</text>
+
+  <!-- 4 Agent nodes -->
+  <circle cx="90" cy="85" r="20" fill="url(#cyan)" opacity="0.8"/>
+  <text x="90" y="89" text-anchor="middle" fill="#0B0D17" font-size="9" font-weight="bold" font-family="monospace">基本面</text>
+
+  <circle cx="310" cy="85" r="20" fill="url(#cyan)" opacity="0.8"/>
+  <text x="310" y="89" text-anchor="middle" fill="#0B0D17" font-size="9" font-weight="bold" font-family="monospace">技术面</text>
+
+  <circle cx="90" cy="215" r="20" fill="url(#cyan)" opacity="0.8"/>
+  <text x="90" y="219" text-anchor="middle" fill="#0B0D17" font-size="9" font-weight="bold" font-family="monospace">估值</text>
+
+  <circle cx="310" cy="215" r="20" fill="url(#cyan)" opacity="0.8"/>
+  <text x="310" y="219" text-anchor="middle" fill="#0B0D17" font-size="9" font-weight="bold" font-family="monospace">新闻</text>
+
+  <!-- Connection lines -->
+  <line x1="118" y1="85" x2="172" y2="122" stroke="#F0B93E" stroke-width="1.5" opacity="0.5"/>
+  <line x1="282" y1="85" x2="228" y2="122" stroke="#F0B93E" stroke-width="1.5" opacity="0.5"/>
+  <line x1="118" y1="215" x2="172" y2="178" stroke="#F0B93E" stroke-width="1.5" opacity="0.5"/>
+  <line x1="282" y1="215" x2="228" y2="178" stroke="#F0B93E" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Bottom legend -->
+  <text x="200" y="270" text-anchor="middle" fill="#9CA3AF" font-size="10" font-family="monospace">LangGraph · ReAct · Multi-Agent</text>
+  <text x="200" y="286" text-anchor="middle" fill="#6B7280" font-size="8" font-family="monospace">A-Share 5000+ · LoRA · vLLM</text>
+</svg>
