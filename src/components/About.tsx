@@ -8,7 +8,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="scroll-mt-16 bg-white py-20 dark:bg-slate-950"
+      className="scroll-mt-16 bg-white/70 py-20 backdrop-blur-sm dark:bg-slate-950/70"
     >
       <div className="mx-auto max-w-4xl px-4">
         <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-white">
