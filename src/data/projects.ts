@@ -30,7 +30,7 @@ export const projects: Project[] = [
     title: 'Fin-MCP 多智能体 A 股分析系统',
     description:
       '基于 LangGraph ReAct + MCP 的多 Agent 金融分析系统。4 个专用 Agent 并行分析，自研 Qwen3-1.7B LoRA 新闻情感与风险预测模型，覆盖 A 股 5000+ 股票，工具调用成功率 98%。',
-    tags: ['LangGraph', 'MCP', 'Qwen3', 'LoRA', 'vLLM', 'Milvus', 'FastAPI'],
+    tags: ['LangGraph', 'MCP', 'GRPO', 'Qwen3', 'LoRA', 'vLLM', 'Milvus', 'FastAPI'],
     screenshot: 'fin-mcp.svg',
     githubUrl: 'https://github.com/yewang0628/Fin-MCP',
     detail: {
@@ -39,7 +39,8 @@ export const projects: Project[] = [
       solution: [
         '数据工具化：基于 MCP 协议封装 27 个金融数据 API，统一数据 Schema，确保金融数据准确性和可追溯性',
         'ReAct 框架 + 多 Agent 协作：基于 LangGraph StateGraph 实现 4 个分析 Agent（基本面/技术面/估值/新闻）+ 1 个 Summary Agent，智能路由支持 Single/Swarm 双模式（单 Agent 分析 vs 4 Agent 并行）',
-        '新闻因子小模型：清洗标注约 10 万条金融新闻（来源 NASDAQ 新闻数据集），基于 Qwen3-1.7B-Instruct LoRA 全层微调情感与风险预测模型，配合 Logits 阈值校准，测试集准确率 91.3% / 88.2%',
+        '新闻因子小模型：三重去重(编辑距离+MinHash+SimHash)清洗 16 万→10 万条金融新闻，人工+大模型+一致性验证半自动标注，基于 Qwen3-1.7B LoRA 微调情感与风险模型，Focal Loss 处理难负样本，准确率 91.2% / 88.4%',
+        'Fin-R1 金融推理大模型：参与 SFT(ConvFinQA+FinQA,~10K)→GRPO(双重奖励:格式0.3+语义0.7)两阶段训练及 A/B 评测，7 维度推理质量评估筛选 6 万条训练样本，Fin-R1 7B 平均 75.2 分仅比 DeepSeek-R1 671B 低 3 分，推理速度提升 95 倍',
         'RAG 知识检索：自建 Milvus 向量库 + 1022 QA 对，bge-large-zh-v1.5 Embedding，6 步在线检索 Pipeline（Query 改写→路由→HyDE→KG 扩展→Dense+Sparse 混合→RRF 融合）',
         '安全与质量：5 层安全防护（1150+ 词库 + 218 审计规则）+ 约束验证器 + 4 级自动修复器',
         '长短期记忆：短期 Redis 5 轮窗口 + MD5 去重 + LLM 压缩；长期 Mem0 元知识提取（只记"怎么分析"，不记"分析出什么"）',
@@ -48,7 +49,8 @@ export const projects: Project[] = [
         '覆盖 A 股 5529 家公司全维度分析（基本面/技术面/估值/新闻），工具调用成功率 98%，数据一致率约 99%',
         '通过并行执行 + 三项智能优化（重复检测/充分性自检/成本标注），端到端 Token 消耗降低 24%，单次分析成本 ¥0.16→¥0.12（-25%）',
         'Head Agent 冲突裁决机制（5 维度优先级 + Agent 能力边界定义），灰度测试用户满意度接近 90%',
-        '整理 1022 QA 对 + 500+ 高频问题形成 RAG 知识库，支持后续迭代与投顾知识复用',
+        'Fin-R1 7B 金融大模型 ConvFinQA 85.0 / FinQA 76.0 / 平均 75.2（仅比 671B DeepSeek-R1 低 3 分），A/B 测试奖励高 3-5 分，推理速度提升 95 倍',
+        '整理 1022 QA 对 + 4000+ 高频问题形成 RAG 知识库，支持后续迭代与投顾知识复用',
       ],
       metrics: [
         { label: 'A股覆盖', value: '5,529', desc: '家公司' },
@@ -56,6 +58,7 @@ export const projects: Project[] = [
         { label: '情感准确率', value: '91.3%', desc: 'Qwen3-1.7B LoRA' },
         { label: '风险准确率', value: '88.2%', desc: '+Logits校准' },
         { label: 'Token节省', value: '-24%', desc: '三项智能优化' },
+        { label: 'Fin-R1', value: '75.2', desc: '7B vs 671B:78.2' },
         { label: '单次成本', value: '¥0.12', desc: 'API模式/次' },
       ],
       iterations: [
@@ -173,6 +176,37 @@ export const projects: Project[] = [
               before: '无容量评估，无法判断系统能支撑多少用户',
               after: '瓶颈链排序：LLM推理(单GPU 1-2并发,4-6min/次) > MCP Server(单进程无连接池) > TaskManager(无TTL自动清理) > 本地模型(GPU加载耗时3-5s/次)。双模式容量对比：本地GPU 10-20次/h vs DeepSeek API 200-300次/h。日容量估算公式 + 压测方案（串行浸泡/阶梯并发/长时间浸泡/MCP独立压测）',
               reason: '容量规划决定了部署选型。对于 100 DAU，DeepSeek API 单机足够；500+ DAU 需 MCP 集群 + 消息队列',
+            },
+          ],
+        },
+        {
+          title: '第四轮迭代：Fin-R1 金融推理大模型训练（SFT + GRPO）',
+          description:
+            '公司专门团队训练金融专用大模型 Fin-R1。基于 Qwen2.5-7B-Instruct，采用 SFT→GRPO 两阶段训练。我参与模型接入评测和 A/B 实验。初期通用模型在金融数值匹配上表现差（"13.1%" vs "13.12%" 被判定为错误），且推理过程缺乏金融领域逻辑。',
+          improvements: [
+            {
+              aspect: 'SFT 阶段（结构化思维链训练）',
+              before: '通用模型对金融问题只做表面回答，无显式推理过程，数值计算易出错',
+              after: 'Qwen2.5-7B-Instruct 全量微调，ConvFinQA + FinQA 约 1 万条数据。训练格式(x, c, y*)：输入问题 x，输出 <think>推理</think><answer>答案</answer>。LR=2e-5, BS=64, 3 epochs, 8×A100 ~6h。模型学会"先推理再回答"的结构化思维',
+              reason: '金融 QA 需要显式推理链才能保证数值计算正确。SFT 让模型建立 reasoning→answer 的范式',
+            },
+            {
+              aspect: 'GRPO 强化学习 + 双重奖励',
+              before: 'SFT 后模型推理能力有基础，但格式不规范、数值匹配仍有偏差',
+              after: '组大小 G=8, ε=0.2, β=0.01(K3 估计器), 8×A100 ~120h。格式奖励(0.3)：检查 think/answer 标签完整性、推理步骤结构化。准确率奖励(0.7)：Qwen2.5-Max 做判别器评估答案正确性，关键是用"数值语义匹配"替代字符串对比 — 13.1%≈13.12%, $46.18B≈46184055450.1',
+              reason: '金融数值有多种表达形式，字符串匹配会误判。格式+语义双奖励让模型在规范性和准确性上同时提升',
+            },
+            {
+              aspect: '三阶段数据质量控制',
+              before: '原始数据含 PDF 金融考题，格式混乱无法直接用于训练',
+              after: '①数据蒸馏：DeepSeek-R1 生成 CoT 推理链(t=0.6)，强制 \\boxed{} 包裹答案 → ②答案检查：Qwen2.5-Max 裁判评估正确性 → ③推理选择：7 维度评分(内部一致性/术语重叠率/推理步骤数/逻辑连贯性/内容多样性/领域相关性/指令一致性)筛选高质量轨迹。最终 60,091 条高质量训练样本，覆盖 34 个金融类别',
+              reason: '7 维评分比传统 BLEU/ROUGE 更能区分推理质量好坏。Qwen2.5-72B 评分与人工标注相关系数 0.87，证明评分有效',
+            },
+            {
+              aspect: 'A/B 评测与效果',
+              before: '通用模型(DeepSeek-R1 671B)在金融推理上平均 78.2 分，但推理速度慢且成本高',
+              after: 'Fin-R1 7B：ConvFinQA 85.0 / FinQA 76.0 / 平均 75.2，仅比 671B 的 DeepSeek-R1 低 3 分，参数量为其 1/95，推理速度提升约 95 倍。在 100 条 A/B 测试中奖励比通用模型高 3–5 分(百分制)',
+              reason: '领域专注 + 高质量数据蒸馏 + 两阶段训练，7B 模型就能接近 671B 的金融推理水平',
             },
           ],
         },
