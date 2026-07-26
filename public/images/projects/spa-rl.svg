@@ -1,55 +1,122 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
   <defs>
-    <linearGradient id="bg3" x1="0" y1="0" x2="400" y2="300" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0a0a1a"/>
-      <stop offset="1" stop-color="#141428"/>
-    </linearGradient>
-    <linearGradient id="gold2" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#F59E0B"/>
-      <stop offset="1" stop-color="#D97706"/>
-    </linearGradient>
-    <linearGradient id="emerald" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#10B981"/>
-      <stop offset="1" stop-color="#059669"/>
-    </linearGradient>
+    <linearGradient id="bg3" x1="0" y1="0" x2="400" y2="300"><stop stop-color="#0A0A1A"/><stop offset="1" stop-color="#111128"/></linearGradient>
+    <linearGradient id="gold3" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#D97706"/></linearGradient>
+    <linearGradient id="green3" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#10B981"/><stop offset="1" stop-color="#059669"/></linearGradient>
+    <linearGradient id="blue3" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6366F1"/><stop offset="1" stop-color="#4F46E5"/></linearGradient>
+    <linearGradient id="pink3" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#F472B6"/><stop offset="1" stop-color="#DB2777"/></linearGradient>
   </defs>
 
   <rect width="400" height="300" rx="12" fill="url(#bg3)"/>
 
-  <!-- Central PPO node -->
-  <rect x="150" y="105" width="100" height="35" rx="10" fill="url(#gold2)" opacity="0.9"/>
-  <text x="200" y="127" text-anchor="middle" fill="#0a0a1a" font-size="12" font-weight="bold" font-family="monospace">PPO Policy</text>
+  <!-- Title -->
+  <text x="200" y="16" text-anchor="middle" fill="#6B7280" font-size="9" font-family="monospace">SPA-RL · Stepwise Progress Attribution Framework</text>
+
+  <!-- === LEFT: Planner-Worker Loop === -->
+  <!-- Task Input -->
+  <rect x="12" y="28" width="100" height="22" rx="5" fill="#1E293B" stroke="#334155" stroke-width="0.8"/>
+  <text x="62" y="43" text-anchor="middle" fill="#E2E8F0" font-size="7.5" font-family="monospace">User Task</text>
+
+  <line x1="62" y1="50" x2="62" y2="60" stroke="#475569" stroke-width="0.8"/>
+
+  <!-- Planner -->
+  <rect x="12" y="60" width="100" height="22" rx="5" fill="url(#gold3)" opacity="0.9"/>
+  <text x="62" y="75" text-anchor="middle" fill="#0A0A1A" font-size="7.5" font-weight="bold" font-family="monospace">Planner (LLM)</text>
+
+  <!-- Arrow down -->
+  <line x1="62" y1="82" x2="62" y2="92" stroke="#F59E0B" stroke-width="1" opacity="0.5"/>
+
+  <!-- Action -->
+  <rect x="22" y="92" width="80" height="18" rx="4" fill="#1E293B" stroke="#F59E0B" stroke-width="0.6"/>
+  <text x="62" y="105" text-anchor="middle" fill="#F59E0B" font-size="7" font-family="monospace">Action</text>
+
+  <!-- Arrow down -->
+  <line x1="62" y1="110" x2="62" y2="118" stroke="#475569" stroke-width="0.8"/>
+
+  <!-- Worker -->
+  <rect x="12" y="118" width="100" height="20" rx="5" fill="url(#blue3)" opacity="0.8"/>
+  <text x="62" y="132" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="monospace">Worker (Phone)</text>
+
+  <!-- Arrow down -->
+  <line x1="62" y1="138" x2="62" y2="146" stroke="#6366F1" stroke-width="0.8" opacity="0.5"/>
+
+  <!-- State/Obs -->
+  <rect x="12" y="146" width="100" height="18" rx="4" fill="#1E293B" stroke="#6366F1" stroke-width="0.6"/>
+  <text x="62" y="159" text-anchor="middle" fill="#93C5FD" font-size="7" font-family="monospace">State · Reward</text>
+
+  <!-- === LOOP ARROW on left side === -->
+  <path d="M 12 155 L 5 155 L 5 71 L 12 71" fill="none" stroke="#475569" stroke-width="0.6" stroke-dasharray="3 2"/>
+  <text x="3" y="113" fill="#475569" font-size="5" font-family="monospace" transform="rotate(-90, 3, 113)">Loop</text>
+
+  <!-- === MIDDLE: Progress Estimator + Grounding === -->
+  <line x1="112" y1="155" x2="152" y2="96" stroke="#475569" stroke-width="0.8"/>
 
   <!-- Progress Estimator -->
-  <rect x="40" y="55" width="130" height="32" rx="8" fill="url(#emerald)" opacity="0.85"/>
-  <text x="105" y="76" text-anchor="middle" fill="#fff" font-size="9" font-family="monospace">Progress Estimator</text>
+  <rect x="152" y="74" width="120" height="44" rx="6" fill="#0C1222" stroke="#10B981" stroke-width="1"/>
+  <text x="212" y="90" text-anchor="middle" fill="#10B981" font-size="7.5" font-weight="bold" font-family="monospace">Progress Estimator</text>
+  <text x="212" y="105" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">LLM + MLP · Per-step Score</text>
+  <text x="212" y="114" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">∑contrib = final reward</text>
+
+  <line x1="112" y1="130" x2="152" y2="130" stroke="#475569" stroke-width="0.8"/>
 
   <!-- Grounding Signal -->
-  <rect x="230" y="55" width="130" height="32" rx="8" fill="#6366F1" opacity="0.7"/>
-  <text x="295" y="76" text-anchor="middle" fill="#fff" font-size="9" font-family="monospace">Grounding Signal</text>
+  <rect x="152" y="118" width="120" height="32" rx="6" fill="#0C1222" stroke="#F472B6" stroke-width="1"/>
+  <text x="212" y="133" text-anchor="middle" fill="#F472B6" font-size="7.5" font-weight="bold" font-family="monospace">Grounding Signal</text>
+  <text x="212" y="146" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">Clickable? · Exists? · Loaded?</text>
 
-  <!-- Environment -->
-  <rect x="120" y="215" width="160" height="32" rx="8" fill="#334155" opacity="0.8" stroke="#475569" stroke-width="1"/>
-  <text x="200" y="236" text-anchor="middle" fill="#94A3B8" font-size="9" font-family="monospace">WebShop / ALFWorld / VHome</text>
+  <!-- === REWARD COMBINATION === -->
+  <line x1="272" y1="96" x2="310" y2="96" stroke="#475569" stroke-width="0.8"/>
+  <line x1="272" y1="134" x2="310" y2="134" stroke="#475569" stroke-width="0.8"/>
 
-  <!-- Arrows -->
-  <line x1="105" y1="87" x2="170" y2="105" stroke="#10B981" stroke-width="1.5" opacity="0.5"/>
-  <line x1="295" y1="87" x2="230" y2="105" stroke="#6366F1" stroke-width="1.5" opacity="0.5"/>
-  <line x1="200" y1="140" x2="200" y2="215" stroke="#F59E0B" stroke-width="1.5" opacity="0.4"/>
-  <line x1="200" y1="247" x2="200" y2="270" stroke="#94A3B8" stroke-width="1" opacity="0.3" stroke-dasharray="4 2"/>
-  <!-- Reward feedback arrow back up -->
-  <path d="M 320 230 Q 370 170 320 120" stroke="#A78BFA" stroke-width="1.2" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+  <rect x="310" y="88" width="78" height="54" rx="6" fill="#1E293B" stroke="#F59E0B" stroke-width="1.2"/>
+  <text x="349" y="105" text-anchor="middle" fill="#F59E0B" font-size="7" font-weight="bold" font-family="monospace">Dense Reward</text>
+  <text x="349" y="119" text-anchor="middle" fill="#6B7280" font-size="5.5" font-family="monospace">α·Progress</text>
+  <text x="349" y="131" text-anchor="middle" fill="#6B7280" font-size="5.5" font-family="monospace">+ β·Grounding</text>
 
-  <!-- Step timeline -->
-  <rect x="45" y="268" width="10" height="10" rx="2" fill="#10B981" opacity="0.8"/>
-  <text x="60" y="277" fill="#6B7280" font-size="7" font-family="monospace">step 1</text>
-  <rect x="105" y="268" width="10" height="10" rx="2" fill="#10B981" opacity="0.6"/>
-  <text x="120" y="277" fill="#6B7280" font-size="7" font-family="monospace">step 2</text>
-  <rect x="165" y="268" width="10" height="10" rx="2" fill="#F59E0B" opacity="0.5"/>
-  <text x="180" y="277" fill="#6B7280" font-size="7" font-family="monospace">...</text>
-  <rect x="225" y="268" width="10" height="10" rx="2" fill="#EF4444" opacity="0.6"/>
-  <text x="240" y="277" fill="#6B7280" font-size="7" font-family="monospace">step n</text>
+  <!-- === RIGHT: PPO Training === -->
+  <line x1="349" y1="142" x2="349" y2="165" stroke="#F59E0B" stroke-width="1" opacity="0.6"/>
 
-  <!-- Bottom legend -->
-  <text x="200" y="293" text-anchor="middle" fill="#6B7280" font-size="8" font-family="monospace">Reward = α × Progress + β × Grounding</text>
+  <rect x="285" y="165" width="110" height="28" rx="6" fill="url(#gold3)" opacity="0.88"/>
+  <text x="340" y="184" text-anchor="middle" fill="#0A0A1A" font-size="8" font-weight="bold" font-family="monospace">PPO Training</text>
+
+  <!-- Policy update arrow back -->
+  <path d="M 285 179 L 115 179 L 115 71 L 112 71" fill="none" stroke="#F59E0B" stroke-width="0.8" opacity="0.3"/>
+  <text x="200" y="175" text-anchor="middle" fill="#F59E0B" font-size="5" font-family="monospace">Policy Update</text>
+
+  <!-- === BOTTOM: Infrastructure === -->
+  <rect x="12" y="205" width="376" height="44" rx="7" fill="#0C1222" stroke="#1E293B" stroke-width="0.6"/>
+
+  <!-- 3 env cards -->
+  <rect x="18" y="211" width="118" height="15" rx="3" fill="#162032" stroke="#334155" stroke-width="0.4"/>
+  <text x="77" y="221" text-anchor="middle" fill="#475569" font-size="6" font-family="monospace">WebShop</text>
+
+  <rect x="140" y="211" width="118" height="15" rx="3" fill="#162032" stroke="#334155" stroke-width="0.4"/>
+  <text x="199" y="221" text-anchor="middle" fill="#475569" font-size="6" font-family="monospace">ALFWorld</text>
+
+  <rect x="262" y="211" width="118" height="15" rx="3" fill="#162032" stroke="#334155" stroke-width="0.4"/>
+  <text x="321" y="221" text-anchor="middle" fill="#475569" font-size="6" font-family="monospace">VirtualHome</text>
+
+  <text x="200" y="243" text-anchor="middle" fill="#475569" font-size="6" font-family="monospace">Qwen3-8B · LoRA r=8/α=16 · A100×8 DeepSpeed ZeRO-3 · vLLM INT8</text>
+
+  <!-- === TRAINING PIPELINE at very bottom === -->
+  <rect x="12" y="257" width="376" height="34" rx="6" fill="#162032" stroke="#1E293B" stroke-width="0.5"/>
+
+  <!-- Pipeline steps -->
+  <rect x="20" y="263" width="70" height="22" rx="4" fill="#1E293B"/>
+  <text x="55" y="278" text-anchor="middle" fill="#6B7280" font-size="6.5" font-family="monospace">SFT 6h</text>
+
+  <line x1="92" y1="274" x2="106" y2="274" stroke="#475569" stroke-width="0.8"/>
+
+  <rect x="108" y="263" width="70" height="22" rx="4" fill="#1E293B"/>
+  <text x="143" y="278" text-anchor="middle" fill="#10B981" font-size="6.5" font-family="monospace">Trajectories</text>
+
+  <line x1="180" y1="274" x2="194" y2="274" stroke="#475569" stroke-width="0.8"/>
+
+  <rect x="196" y="263" width="70" height="22" rx="4" fill="#1E293B"/>
+  <text x="231" y="278" text-anchor="middle" fill="#F472B6" font-size="6.5" font-family="monospace">Progress Est.</text>
+
+  <line x1="268" y1="274" x2="282" y2="274" stroke="#475569" stroke-width="0.8"/>
+
+  <rect x="284" y="263" width="96" height="22" rx="4" fill="url(#gold3)" opacity="0.8"/>
+  <text x="332" y="278" text-anchor="middle" fill="#0A0A1A" font-size="6.5" font-weight="bold" font-family="monospace">PPO RL ~24h</text>
 </svg>

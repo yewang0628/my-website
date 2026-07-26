@@ -1,45 +1,85 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
   <defs>
-    <linearGradient id="bg2" x1="0" y1="0" x2="400" y2="300" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0F172A"/>
-      <stop offset="1" stop-color="#1E1340"/>
-    </linearGradient>
-    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#14B8A6"/>
-      <stop offset="1" stop-color="#0D9488"/>
-    </linearGradient>
-    <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#F472B6"/>
-      <stop offset="1" stop-color="#E11D48"/>
-    </linearGradient>
+    <linearGradient id="bg2" x1="0" y1="0" x2="400" y2="300"><stop stop-color="#0A0F1E"/><stop offset="1" stop-color="#111827"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#14B8A6"/><stop offset="1" stop-color="#0D9488"/></linearGradient>
+    <linearGradient id="rose2" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#F472B6"/><stop offset="1" stop-color="#DB2777"/></linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#FBBF24"/><stop offset="1" stop-color="#D97706"/></linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#C084FC"/><stop offset="1" stop-color="#9333EA"/></linearGradient>
   </defs>
 
   <rect width="400" height="300" rx="12" fill="url(#bg2)"/>
 
-  <!-- LeadAgent central node -->
-  <rect x="160" y="118" width="80" height="30" rx="8" fill="url(#teal)" opacity="0.9"/>
-  <text x="200" y="138" text-anchor="middle" fill="#0F172A" font-size="10" font-weight="bold" font-family="monospace">LeadAgent</text>
+  <!-- Title -->
+  <text x="200" y="16" text-anchor="middle" fill="#6B7280" font-size="9" font-family="monospace">MediX · Skills-Agent Dual Architecture</text>
 
-  <!-- 3 Worker Agents -->
-  <rect x="40" y="55" width="100" height="28" rx="8" fill="url(#rose)" opacity="0.85"/>
-  <text x="90" y="74" text-anchor="middle" fill="#fff" font-size="9" font-family="monospace">Consultation</text>
+  <!-- === TOP: User + Router === -->
+  <rect x="140" y="24" width="120" height="20" rx="5" fill="#1E293B" stroke="#334155" stroke-width="0.8"/>
+  <text x="200" y="37" text-anchor="middle" fill="#E2E8F0" font-size="8" font-family="monospace">User · Health Query</text>
 
-  <rect x="40" y="210" width="100" height="28" rx="8" fill="url(#rose)" opacity="0.85"/>
-  <text x="90" y="229" text-anchor="middle" fill="#fff" font-size="9" font-family="monospace">Diagnostic</text>
+  <line x1="200" y1="44" x2="200" y2="52" stroke="#475569" stroke-width="0.8"/>
 
-  <rect x="260" y="135" width="100" height="28" rx="8" fill="url(#rose)" opacity="0.85"/>
-  <text x="310" y="154" text-anchor="middle" fill="#fff" font-size="9" font-family="monospace">Research</text>
+  <!-- SwarmCoordinator -->
+  <rect x="120" y="52" width="160" height="20" rx="5" fill="url(#amber)" opacity="0.88"/>
+  <text x="200" y="66" text-anchor="middle" fill="#0A0F1E" font-size="7.5" font-weight="bold" font-family="monospace">SwarmCoordinator · 70/30 Routing</text>
 
-  <!-- Connections -->
-  <line x1="140" y1="69" x2="160" y2="123" stroke="#14B8A6" stroke-width="1" opacity="0.4"/>
-  <line x1="140" y1="224" x2="160" y2="143" stroke="#14B8A6" stroke-width="1" opacity="0.4"/>
-  <line x1="240" y1="133" x2="260" y2="145" stroke="#14B8A6" stroke-width="1" opacity="0.4"/>
+  <line x1="200" y1="72" x2="200" y2="80" stroke="#FBBF24" stroke-width="1" opacity="0.5"/>
 
-  <!-- 7 Skills row -->
-  <text x="200" y="266" text-anchor="middle" fill="#6B7280" font-size="8" font-family="monospace">
-    ⚕ Knowledge • Risk • Symptoms • Lifestyle • ICD-10 • Guidelines • Deep Research
-  </text>
+  <!-- LeadAgent -->
+  <rect x="130" y="80" width="140" height="20" rx="5" fill="#1E293B" stroke="#FBBF24" stroke-width="0.8"/>
+  <text x="200" y="94" text-anchor="middle" fill="#FBBF24" font-size="8" font-family="monospace">LeadAgent · Task Decompose</text>
 
-  <!-- Bottom legend -->
-  <text x="200" y="284" text-anchor="middle" fill="#9CA3AF" font-size="9" font-family="monospace">Skills-Agent • ReAct Loop • Swarm • Mem0</text>
+  <!-- SharedContext -->
+  <rect x="160" y="104" width="80" height="14" rx="4" fill="#1E293B" stroke="#475569" stroke-width="0.5"/>
+  <text x="200" y="113" text-anchor="middle" fill="#6B7280" font-size="6" font-family="monospace">SharedContext</text>
+
+  <!-- === 3 WORKERS === -->
+  <!-- Lines -->
+  <line x1="130" y1="100" x2="50" y2="130" stroke="#14B8A6" stroke-width="0.8" opacity="0.4"/>
+  <line x1="200" y1="118" x2="200" y2="130" stroke="#F472B6" stroke-width="0.8" opacity="0.4"/>
+  <line x1="270" y1="100" x2="350" y2="130" stroke="#C084FC" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- Consultation Agent -->
+  <rect x="5" y="130" width="130" height="22" rx="5" fill="url(#teal)" opacity="0.85"/>
+  <text x="70" y="145" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="monospace">ConsultationAgent</text>
+
+  <!-- Diagnostic Agent -->
+  <rect x="135" y="130" width="130" height="22" rx="5" fill="url(#rose2)" opacity="0.85"/>
+  <text x="200" y="145" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="monospace">DiagnosticAgent</text>
+
+  <!-- Research Agent -->
+  <rect x="265" y="130" width="130" height="22" rx="5" fill="url(#violet)" opacity="0.85"/>
+  <text x="330" y="145" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="monospace">ResearchAgent</text>
+
+  <!-- Agent Loop detail -->
+  <text x="70" y="160" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">ReAct Loop · max 3 tools</text>
+  <text x="200" y="160" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">ReAct Loop · max 3 tools</text>
+  <text x="330" y="160" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">ReAct Loop · max 3 tools</text>
+
+  <!-- === 7 SKILLS ROW === -->
+  <rect x="8" y="170" width="384" height="32" rx="6" fill="#0C1222" stroke="#1E293B" stroke-width="0.6"/>
+  <text x="200" y="182" text-anchor="middle" fill="#6B7280" font-size="6" font-family="monospace">7 Atomic Skills (shared by all Agents)</text>
+  <text x="200" y="195" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">knowledge · risk · symptoms · lifestyle · ICD-10 · guideline · deep-research</text>
+
+  <!-- === HYBRID SEARCH === -->
+  <rect x="8" y="210" width="384" height="22" rx="5" fill="#1E293B" stroke="#14B8A6" stroke-width="0.6"/>
+  <text x="200" y="225" text-anchor="middle" fill="#14B8A6" font-size="6.5" font-family="monospace">Hybrid Search: KG→HyDE→BM25+MedEmbed→RRF→BGE-Reranker→Top-3</text>
+
+  <!-- === INFRASTRUCTURE === -->
+  <rect x="8" y="238" width="384" height="54" rx="6" fill="#0C1222" stroke="#1E293B" stroke-width="0.6"/>
+
+  <!-- Bottom row: 3 panels -->
+  <rect x="14" y="244" width="122" height="42" rx="4" fill="#162032" stroke="#1E293B" stroke-width="0.5"/>
+  <text x="75" y="258" text-anchor="middle" fill="#14B8A6" font-size="6" font-family="monospace">Memory System</text>
+  <text x="75" y="272" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">Short-term MD5 dedup</text>
+  <text x="75" y="282" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">Long-term Mem0</text>
+
+  <rect x="140" y="244" width="122" height="42" rx="4" fill="#162032" stroke="#1E293B" stroke-width="0.5"/>
+  <text x="201" y="258" text-anchor="middle" fill="#F472B6" font-size="6" font-family="monospace">Harness Eng</text>
+  <text x="201" y="272" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">YAML Constraints</text>
+  <text x="201" y="282" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">Auto-fix 100%</text>
+
+  <rect x="266" y="244" width="122" height="42" rx="4" fill="#162032" stroke="#1E293B" stroke-width="0.5"/>
+  <text x="327" y="258" text-anchor="middle" fill="#C084FC" font-size="6" font-family="monospace">VLM Training</text>
+  <text x="327" y="272" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">Qwen3.5-2B SFT+GSPO</text>
+  <text x="327" y="282" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">Score 0.58→0.78</text>
 </svg>
