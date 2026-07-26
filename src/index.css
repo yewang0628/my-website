@@ -5,3 +5,11 @@
 html {
   scroll-behavior: smooth;
 }
+
+body {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #faf5ff 100%);
+}
+
+.dark body {
+  background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #0c0a1d 100%);
+}

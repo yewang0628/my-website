@@ -11,32 +11,35 @@ interface Particle {
 
 function getParticleCount(): number {
   const w = window.innerWidth
-  if (w < 768) return 50
-  if (w < 1280) return 80
-  return 120
+  if (w < 768) return 40
+  if (w < 1280) return 70
+  return 110
 }
 
-function getConnectionDistance(): number {
+function getConnectionDist(): number {
   return window.innerWidth < 768 ? 100 : 150
 }
 
-function getStyle(theme: 'light' | 'dark') {
+// ── Sci-fi color palettes ──
+function palette(theme: 'light' | 'dark') {
   return theme === 'dark'
     ? {
-        particle: '6, 182, 212',
-        line: '6, 182, 212',
-        accent: '6, 182, 212',
-        glowAlpha: 0.5,
-        coreAlpha: 0.9,
-        lineAlpha: 0.25,
+        // neon cyan + electric indigo on deep dark
+        particle: '56, 189, 248',       // sky-400
+        accent: '34, 211, 238',         // cyan-400
+        line: '56, 189, 248',           // sky-400
+        glowA: 0.55,
+        coreA: 0.9,
+        lineA: 0.22,
       }
     : {
-        particle: '99, 102, 241',
-        line: '99, 102, 241',
-        accent: '168, 85, 247',
-        glowAlpha: 0.35,
-        coreAlpha: 0.8,
-        lineAlpha: 0.15,
+        // deep indigo + violet on light
+        particle: '79, 70, 229',        // indigo-600
+        accent: '124, 58, 237',         // violet-600
+        line: '79, 70, 229',            // indigo-600
+        glowA: 0.3,
+        coreA: 0.75,
+        lineA: 0.12,
       }
 }
 
@@ -46,6 +49,7 @@ export default function ParticleCanvas() {
   const mouseRef = useRef({ x: -1000, y: -1000 })
   const particlesRef = useRef<Particle[]>([])
   const animRef = useRef(0)
+  const sizeRef = useRef({ w: 0, h: 0 })
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -53,15 +57,14 @@ export default function ParticleCanvas() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const dpr = window.devicePixelRatio || 1
-    let w = 0
-    let h = 0
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
     let count = getParticleCount()
-    const connectionDist = getConnectionDistance()
+    const connDist = getConnectionDist()
 
     function resize() {
-      w = window.innerWidth
-      h = document.documentElement.scrollHeight
+      const w = window.innerWidth
+      const h = document.documentElement.scrollHeight
+      sizeRef.current = { w, h }
       canvas!.width = w * dpr
       canvas!.height = h * dpr
       canvas!.style.width = `${w}px`
@@ -70,100 +73,95 @@ export default function ParticleCanvas() {
       count = getParticleCount()
     }
 
-    function initParticles() {
-      const particles: Particle[] = []
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          r: Math.random() * 1.5 + 1,
-        })
-      }
-      particlesRef.current = particles
+    function seed(w: number, h: number): Particle[] {
+      return Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        r: Math.random() * 2 + 1,
+      }))
     }
 
     resize()
-    initParticles()
+    particlesRef.current = seed(sizeRef.current.w, sizeRef.current.h)
 
     function animate() {
-      const style = getStyle(theme)
+      const pal = palette(theme)
+      const { w, h } = sizeRef.current
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
 
       ctx!.clearRect(0, 0, w, h)
 
-      const particles = particlesRef.current
+      const ps = particlesRef.current
 
-      // Update & draw particles
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i]
+      // ensure count matches if viewport changed
+      while (ps.length < count) {
+        ps.push({ x: Math.random() * w, y: Math.random() * h, vx: 0, vy: 0, r: Math.random() * 2 + 1 })
+      }
 
-        // Move
+      for (let i = 0; i < ps.length; i++) {
+        const p = ps[i]
+
+        // move
         p.x += p.vx
         p.y += p.vy
 
-        // Mouse repulsion
+        // mouse repulsion
         const dx = p.x - mx
         const dy = p.y - my
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 120 && dist > 0) {
-          const force = 0.6 * (1 - dist / 120)
-          p.vx += (dx / dist) * force * 0.1
-          p.vy += (dy / dist) * force * 0.1
+        const d = Math.sqrt(dx * dx + dy * dy)
+        if (d < 130 && d > 0) {
+          const f = 0.5 * (1 - d / 130)
+          p.vx += (dx / d) * f * 0.12
+          p.vy += (dy / d) * f * 0.12
         }
 
-        // Damping
-        p.vx *= 0.998
-        p.vy *= 0.998
+        // damping
+        p.vx *= 0.997
+        p.vy *= 0.997
 
-        // Speed clamp
-        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
-        if (speed > 1.5) {
-          p.vx = (p.vx / speed) * 1.5
-          p.vy = (p.vy / speed) * 1.5
-        }
-        if (speed < 0.2) {
-          p.vx += (Math.random() - 0.5) * 0.05
-          p.vy += (Math.random() - 0.5) * 0.05
-        }
+        // speed management
+        const s = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
+        if (s > 1.5) { p.vx = (p.vx / s) * 1.5; p.vy = (p.vy / s) * 1.5 }
+        if (s < 0.15) { p.vx += (Math.random() - 0.5) * 0.04; p.vy += (Math.random() - 0.5) * 0.04 }
 
-        // Boundary wrap
+        // wrap
         if (p.x < -50) p.x = w + 50
         if (p.x > w + 50) p.x = -50
         if (p.y < -50) p.y = h + 50
         if (p.y > h + 50) p.y = -50
 
-        // Draw glow
-        const gradient = ctx!.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4)
-        gradient.addColorStop(0, `rgba(${style.particle}, ${style.glowAlpha + 0.15})`)
-        gradient.addColorStop(0.5, `rgba(${style.particle}, ${style.glowAlpha * 0.3})`)
-        gradient.addColorStop(1, `rgba(${style.particle}, 0)`)
+        // glow
+        const grad = ctx!.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5)
+        grad.addColorStop(0, `rgba(${pal.particle}, ${pal.glowA + 0.2})`)
+        grad.addColorStop(0.4, `rgba(${pal.particle}, ${pal.glowA * 0.35})`)
+        grad.addColorStop(1, `rgba(${pal.particle}, 0)`)
         ctx!.beginPath()
-        ctx!.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2)
-        ctx!.fillStyle = gradient
+        ctx!.arc(p.x, p.y, p.r * 5, 0, Math.PI * 2)
+        ctx!.fillStyle = grad
         ctx!.fill()
 
-        // Draw core
+        // core
         ctx!.beginPath()
         ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx!.fillStyle = `rgba(${style.accent}, ${style.coreAlpha})`
+        ctx!.fillStyle = `rgba(${pal.accent}, ${pal.coreA})`
         ctx!.fill()
       }
 
-      // Draw connections
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x
-          const dy = particles[i].y - particles[j].y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          if (dist < connectionDist) {
-            const opacity = (1 - dist / connectionDist) * style.lineAlpha
+      // connections
+      for (let i = 0; i < ps.length; i++) {
+        for (let j = i + 1; j < ps.length; j++) {
+          const dx = ps[i].x - ps[j].x
+          const dy = ps[i].y - ps[j].y
+          const d = Math.sqrt(dx * dx + dy * dy)
+          if (d < connDist) {
+            const a = (1 - d / connDist) * pal.lineA
             ctx!.beginPath()
-            ctx!.moveTo(particles[i].x, particles[i].y)
-            ctx!.lineTo(particles[j].x, particles[j].y)
-            ctx!.strokeStyle = `rgba(${style.line}, ${opacity})`
+            ctx!.moveTo(ps[i].x, ps[i].y)
+            ctx!.lineTo(ps[j].x, ps[j].y)
+            ctx!.strokeStyle = `rgba(${pal.line}, ${a})`
             ctx!.lineWidth = 0.5
             ctx!.stroke()
           }
@@ -175,33 +173,30 @@ export default function ParticleCanvas() {
 
     animate()
 
-    const onResize = () => {
+    // ── ResizeObserver on document body to catch height changes ──
+    const ro = new ResizeObserver(() => {
       resize()
-      initParticles()
-    }
+      // adjust particle count for new dimensions
+      const newCount = getParticleCount()
+      if (newCount !== count) {
+        count = newCount
+        particlesRef.current = seed(sizeRef.current.w, sizeRef.current.h)
+      }
+    })
+    ro.observe(document.documentElement)
+
     const onMouse = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY + window.scrollY }
     }
-    const onScroll = () => {
-      resize()
-    }
 
-    window.addEventListener('resize', onResize)
-    window.addEventListener('mousemove', onMouse)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('mousemove', onMouse, { passive: true })
 
     return () => {
       cancelAnimationFrame(animRef.current)
-      window.removeEventListener('resize', onResize)
+      ro.disconnect()
       window.removeEventListener('mousemove', onMouse)
-      window.removeEventListener('scroll', onScroll)
     }
   }, [theme])
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="pointer-events-none fixed inset-0 z-0"
-    />
-  )
+  return <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-0" />
 }
