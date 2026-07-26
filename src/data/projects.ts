@@ -183,7 +183,7 @@ export const projects: Project[] = [
     title: 'MediX — 多智能体医疗助手',
     description:
       'Skills-Agent 双层架构的医疗 AI 系统。3 个专业 Agent + 7 个原子 Skills 解耦协作，ReAct Loop 自主调用工具（硬限3次），Swarm 智能路由（70%单Agent/30%协作），双层记忆（MD5去重+Mem0），约束系统自动修复输出。',
-    tags: ['LangGraph', 'ReAct', 'Mem0', 'LoRA', 'DAPO', 'vLLM', 'Milvus'],
+    tags: ['LangGraph', 'ReAct', 'Mem0', 'LoRA', 'GSPO', 'vLLM', 'Milvus'],
     screenshot: 'medix.svg',
     githubUrl: 'https://github.com/yewang0628/MediX',
     detail: {
@@ -195,7 +195,7 @@ export const projects: Project[] = [
         'Swarm 协作系统：LeadAgent 判断问题复杂度并分解任务，智能路由 70% 单 Agent 快速通道 / 30% Swarm 协作模式，Agent 间通过 SharedContext 间接共享任务状态和执行结果',
         '双层记忆机制：短期记忆管理会话级对话历史（单例模式共享上下文，MD5 去重 + 超限压缩 35%，加载最近 5 轮），长期记忆通过 Mem0 云服务向量化存储会话总结，支持跨会话相似案例检索',
         'Harness Engineering 约束系统：YAML 显式定义 Agent 能力边界并运行时验证，输出自动修复（缺少免责声明自动添加、高危症状自动附加就医警告）',
-        'VLM 模型训练：Qwen3.5-2B SFT（40K 医学 VQA）+ DAPO RL（2.5K），级联 Reward（Embed 双阈值过滤 + LLM Judge 三档），chat_template 修复确保格式学习，RTX 5070 12GB 单卡完成',
+        'VLM 模型训练：Qwen3.5-2B SFT（40K 医学 VQA）+ GSPO RL（2.5K），级联 Reward（Embed 双阈值过滤 + LLM Judge 三档），chat_template 修复确保格式学习，RTX 5070 12GB 单卡完成',
       ],
       results: [
         '路由准确率 88%→95%，知识库检索准确率 87%，单 Agent 5–15s，Swarm 20–30s，多轮对话理解准确率 60%→92%',
@@ -286,9 +286,9 @@ export const projects: Project[] = [
             '通用 LLM 缺乏医学影像理解能力，输出质量不稳定（遗漏免责声明、缺少就医警告），需要自训 VLM 并建立输出质量保障体系。',
           improvements: [
             {
-              aspect: 'Qwen3.5-2B SFT→DAPO RL 两阶段训练',
+              aspect: 'Qwen3.5-2B SFT→GSPO RL 两阶段训练',
               before: '通用模型医学 VQA 平均得分 0.58，无 CoT 推理能力，格式输出不稳定',
-              after: 'Stage1 SFT：40K 医学 VQA（16 模态，48K 全量采样 7K）+ DeepSeek Flash 生成 CoT 推理链（分 3 档复杂度），3 epochs。Stage2 DAPO RL：2.5K 样本，8 generations/prompt，级联 Reward（Embed 双阈值 0.45/0.85 过滤 + LLM Judge 三档 EQUIVALENT/PARTIAL/DIFFERENT），beta=0.01 KL 约束，2250 steps ~12.5h',
+              after: 'Stage1 SFT：40K 医学 VQA（16 模态，48K 全量采样 7K）+ DeepSeek Flash 生成 CoT 推理链（分 3 档复杂度），3 epochs。Stage2 GSPO RL：2.5K 样本，8 generations/prompt，级联 Reward（Embed 双阈值 0.45/0.85 过滤 + LLM Judge 三档 EQUIVALENT/PARTIAL/DIFFERENT），beta=0.01 KL 约束，2250 steps ~12.5h',
               reason: 'Embed 双阈值过滤 ~70% 明确样本不调 API，大幅降低 Judge 成本。chat_template 修复是关键（Qwen3.5 原生模板会丢弃 <MODALITY> 前缀，修复后格式才真正生效）',
             },
             {
@@ -298,7 +298,7 @@ export const projects: Project[] = [
               reason: 'v1 每条都调 Judge API，2.5K×8=20K 次调用，成本高且噪音大。v2 Embed 预判后仅 ~6K 次 API 调用',
             },
             {
-              aspect: 'DAPO 训练踩坑与调优',
+              aspect: 'GSPO 训练踩坑与调优',
               before: '初始配置：num_generations=4, temperature=0.8, beta=0.04, cascaded reward',
               after: 'num_generations 4→8（GSPO advantage 方差为0→梯度死掉）；temperature 0.8→1.2（entropy 过低）；beta 0.04→0.01（约束过强→策略不更新）；cascaded→并行加权（低阈值默认满分→reward 过早饱和）。RLMonitorCallback 三级监控：紧急熔断(entropy<0.3)/收敛停车/预警',
               reason: 'RL 训练的"玄学"时刻：num_generations=4 时 advantage 方差为零完全无梯度，提到 8 才解决。这些踩坑经验本身就是工程能力的体现',
