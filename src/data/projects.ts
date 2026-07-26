@@ -183,7 +183,7 @@ export const projects: Project[] = [
     title: 'MediX — 多智能体医疗助手',
     description:
       'Skills-Agent 双层架构的医疗 AI 系统。3 个专业 Agent + 7 个原子 Skills 解耦协作，ReAct Loop 自主调用工具（硬限3次），Swarm 智能路由（70%单Agent/30%协作），双层记忆（MD5去重+Mem0），约束系统自动修复输出。',
-    tags: ['LangGraph', 'ReAct', 'Mem0', 'LoRA', 'GSPO', 'vLLM', 'Milvus'],
+    tags: ['Skills-Agent', 'ReAct', 'Swarm', 'Mem0', 'GSPO', 'LoRA', 'vLLM', 'Milvus'],
     screenshot: 'medix.svg',
     githubUrl: 'https://github.com/yewang0628/MediX',
     detail: {
