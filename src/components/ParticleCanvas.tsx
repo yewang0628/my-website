@@ -20,10 +20,24 @@ function getConnectionDistance(): number {
   return window.innerWidth < 768 ? 100 : 150
 }
 
-function getColors(theme: 'light' | 'dark') {
+function getStyle(theme: 'light' | 'dark') {
   return theme === 'dark'
-    ? { particle: '99, 102, 241', line: '99, 102, 241', accent: '6, 182, 212' }
-    : { particle: '99, 102, 241', line: '99, 102, 241', accent: '168, 85, 247' }
+    ? {
+        particle: '6, 182, 212',
+        line: '6, 182, 212',
+        accent: '6, 182, 212',
+        glowAlpha: 0.5,
+        coreAlpha: 0.9,
+        lineAlpha: 0.25,
+      }
+    : {
+        particle: '99, 102, 241',
+        line: '99, 102, 241',
+        accent: '168, 85, 247',
+        glowAlpha: 0.35,
+        coreAlpha: 0.8,
+        lineAlpha: 0.15,
+      }
 }
 
 export default function ParticleCanvas() {
@@ -74,7 +88,7 @@ export default function ParticleCanvas() {
     initParticles()
 
     function animate() {
-      const colors = getColors(theme)
+      const style = getStyle(theme)
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
 
@@ -123,9 +137,9 @@ export default function ParticleCanvas() {
 
         // Draw glow
         const gradient = ctx!.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4)
-        gradient.addColorStop(0, `rgba(${colors.particle}, 0.6)`)
-        gradient.addColorStop(0.5, `rgba(${colors.particle}, 0.15)`)
-        gradient.addColorStop(1, `rgba(${colors.particle}, 0)`)
+        gradient.addColorStop(0, `rgba(${style.particle}, ${style.glowAlpha + 0.15})`)
+        gradient.addColorStop(0.5, `rgba(${style.particle}, ${style.glowAlpha * 0.3})`)
+        gradient.addColorStop(1, `rgba(${style.particle}, 0)`)
         ctx!.beginPath()
         ctx!.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2)
         ctx!.fillStyle = gradient
@@ -134,7 +148,7 @@ export default function ParticleCanvas() {
         // Draw core
         ctx!.beginPath()
         ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx!.fillStyle = `rgba(${colors.accent}, 0.8)`
+        ctx!.fillStyle = `rgba(${style.accent}, ${style.coreAlpha})`
         ctx!.fill()
       }
 
@@ -145,11 +159,11 @@ export default function ParticleCanvas() {
           const dy = particles[i].y - particles[j].y
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < connectionDist) {
-            const opacity = (1 - dist / connectionDist) * 0.2
+            const opacity = (1 - dist / connectionDist) * style.lineAlpha
             ctx!.beginPath()
             ctx!.moveTo(particles[i].x, particles[i].y)
             ctx!.lineTo(particles[j].x, particles[j].y)
-            ctx!.strokeStyle = `rgba(${colors.line}, ${opacity})`
+            ctx!.strokeStyle = `rgba(${style.line}, ${opacity})`
             ctx!.lineWidth = 0.5
             ctx!.stroke()
           }
