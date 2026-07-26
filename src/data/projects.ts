@@ -40,7 +40,7 @@ export const projects: Project[] = [
         '数据工具化：基于 MCP 协议封装 27 个金融数据 API，统一数据 Schema，确保金融数据准确性和可追溯性',
         'ReAct 框架 + 多 Agent 协作：基于 LangGraph StateGraph 实现 4 个分析 Agent（基本面/技术面/估值/新闻）+ 1 个 Summary Agent，智能路由支持 Single/Swarm 双模式（单 Agent 分析 vs 4 Agent 并行）',
         '新闻因子小模型：三重去重(编辑距离+MinHash+SimHash)清洗 16 万→10 万条金融新闻，人工+大模型+一致性验证半自动标注，基于 Qwen3-1.7B LoRA 微调情感与风险模型，Focal Loss 处理难负样本，准确率 91.2% / 88.4%',
-        'Fin-R1 金融推理大模型：参与 SFT(ConvFinQA+FinQA,~10K)→GRPO(双重奖励:格式0.3+语义0.7)两阶段训练及 A/B 评测，7 维度推理质量评估筛选 6 万条训练样本，Fin-R1 7B 平均 75.2 分仅比 DeepSeek-R1 671B 低 3 分，推理速度提升 95 倍',
+        '金融大模型评测：参与开源金融推理模型 Fin-R1 7B（SFT+GRPO 两阶段训练）的接入评测与 A/B 实验，7 维度推理质量评估筛选 6 万条训练样本，Fin-R1 7B 平均 75.2 分仅比 DeepSeek-R1 671B 低 3 分，推理速度提升 95 倍',
         'RAG 知识检索：自建 Milvus 向量库 + 1022 QA 对，bge-large-zh-v1.5 Embedding，6 步在线检索 Pipeline（Query 改写→路由→HyDE→KG 扩展→Dense+Sparse 混合→RRF 融合）',
         '安全与质量：5 层安全防护（1150+ 词库 + 218 审计规则）+ 约束验证器 + 4 级自动修复器',
         '长短期记忆：短期 Redis 5 轮窗口 + MD5 去重 + LLM 压缩；长期 Mem0 元知识提取（只记"怎么分析"，不记"分析出什么"）',
@@ -49,7 +49,7 @@ export const projects: Project[] = [
         '覆盖 A 股 5529 家公司全维度分析（基本面/技术面/估值/新闻），工具调用成功率 98%，数据一致率约 99%',
         '通过并行执行 + 三项智能优化（重复检测/充分性自检/成本标注），端到端 Token 消耗降低 24%，单次分析成本 ¥0.16→¥0.12（-25%）',
         'Head Agent 冲突裁决机制（5 维度优先级 + Agent 能力边界定义），灰度测试用户满意度接近 90%',
-        'Fin-R1 7B 金融大模型 ConvFinQA 85.0 / FinQA 76.0 / 平均 75.2（仅比 671B DeepSeek-R1 低 3 分），A/B 测试奖励高 3-5 分，推理速度提升 95 倍',
+        '接入开源金融推理模型 Fin-R1 7B 评测：ConvFinQA 85.0 / FinQA 76.0 / 平均 75.2（仅比 671B DeepSeek-R1 低 3 分），A/B 测试奖励高 3-5 分，推理速度提升 95 倍',
         '整理 1022 QA 对 + 4000+ 高频问题形成 RAG 知识库，支持后续迭代与投顾知识复用',
       ],
       metrics: [
@@ -58,7 +58,7 @@ export const projects: Project[] = [
         { label: '情感准确率', value: '91.3%', desc: 'Qwen3-1.7B LoRA' },
         { label: '风险准确率', value: '88.2%', desc: '+Logits校准' },
         { label: 'Token节省', value: '-24%', desc: '三项智能优化' },
-        { label: 'Fin-R1', value: '75.2', desc: '7B vs 671B:78.2' },
+        { label: 'Fin-R1评测', value: '75.2', desc: '7B vs 671B:78.2' },
         { label: '单次成本', value: '¥0.12', desc: 'API模式/次' },
       ],
       iterations: [
@@ -180,9 +180,9 @@ export const projects: Project[] = [
           ],
         },
         {
-          title: '第四轮迭代：Fin-R1 金融推理大模型训练（SFT + GRPO）',
+          title: '第四轮迭代：金融大模型接入评测（Fin-R1 SFT + GRPO）',
           description:
-            '公司专门团队训练金融专用大模型 Fin-R1。基于 Qwen2.5-7B-Instruct，采用 SFT→GRPO 两阶段训练。我参与模型接入评测和 A/B 实验。初期通用模型在金融数值匹配上表现差（"13.1%" vs "13.12%" 被判定为错误），且推理过程缺乏金融领域逻辑。',
+            '公司专门团队基于 Qwen2.5-7B-Instruct 训练金融专用大模型 Fin-R1，采用 SFT→GRPO 两阶段训练。Qwen3-8B 作为主推理引擎已满足业务需求，我的工作侧重 Fin-R1 的接入评测和 A/B 对比实验。初期通用模型在金融数值匹配上表现差（"13.1%" vs "13.12%" 被判定为错误），且推理过程缺乏金融领域逻辑。',
           improvements: [
             {
               aspect: 'SFT 阶段（结构化思维链训练）',

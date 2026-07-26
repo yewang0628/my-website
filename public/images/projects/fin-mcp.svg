@@ -77,10 +77,10 @@
   <rect x="8" y="223" width="384" height="70" rx="7" fill="#0C1222" stroke="#1E293B" stroke-width="0.6"/>
 
   <rect x="14" y="229" width="90" height="58" rx="4" fill="#0F1A2A" stroke="#1E293B" stroke-width="0.4"/>
-  <text x="59" y="247" text-anchor="middle" fill="#22D3EE" font-size="6.5" font-family="monospace">Fin-R1 7B</text>
-  <text x="59" y="261" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">SFT + GRPO</text>
-  <text x="59" y="273" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">Score 75.2</text>
-  <text x="59" y="283" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">95× faster</text>
+  <text x="59" y="247" text-anchor="middle" fill="#22D3EE" font-size="6.5" font-family="monospace">Qwen3-8B</text>
+  <text x="59" y="261" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">主推理引擎</text>
+  <text x="59" y="273" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">vLLM 部署</text>
+  <text x="59" y="283" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">+Fin-R1 评测</text>
 
   <rect x="108" y="229" width="90" height="58" rx="4" fill="#0F1A2A" stroke="#1E293B" stroke-width="0.4"/>
   <text x="153" y="247" text-anchor="middle" fill="#A78BFA" font-size="6.5" font-family="monospace">Qwen3-1.7B×2</text>
