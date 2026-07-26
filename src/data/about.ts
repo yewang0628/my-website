@@ -1,7 +1,7 @@
 export const bioParagraphs: string[] = [
-  '我是一名 AI 工程师兼全栈开发者，专注于大模型应用落地与多智能体系统设计。擅长 LangGraph Agent 编排、LoRA 微调、MCP 工具集成，致力于将前沿 AI 技术转化为可用的产品。',
-  '主导开发了 Fin-MCP 多智能体 A 股分析系统，从数据管线搭建到大模型微调再到前端交互，完整经历了 AI 产品的 0-1 构建。该项目覆盖 A 股 5000+ 股票的全维度分析，在灰度测试中用户满意度接近 90%。',
-  '我相信技术的力量在于解决真实问题。始终保持对 AI 前沿的敏锐度，热衷于探索 RAG、Agent 协作、模型部署等方向的工程最佳实践。',
+  '我是一名 AI 工程师，专注于多智能体系统与大模型应用落地。核心方向涵盖 Agent 架构设计（ReAct Loop / Swarm 协作 / Skills-Agent 解耦）、大模型微调（SFT + GSPO RL）、检索增强生成（混合检索 + HyDE + Reranker）和约束系统设计。擅长在 12GB 单卡上完成从数据管线到模型训练再到推理部署的完整闭环。',
+  '独立开发了 Fin-MCP 多智能体 A 股分析系统，基于 LangGraph + MCP 协议实现 4 个分析 Agent 并行协作，覆盖 A 股 5529 家公司。自研三项智能优化策略（重复调用检测/数据充分性自检/成本标注）将 Token 消耗降低 24%，单次分析成本 ¥0.16→¥0.12。基于 Qwen3-1.7B LoRA 微调新闻情感与风险预测模型（测试集 91%/88%）。',
+  '主导开发了 MediX 多智能体医疗助手，采用自研 Skills-Agent 双层架构（7 原子 Skills + 3 专业 Agent 解耦协作）。自建 5 步混合检索管线（KG 扩展→HyDE→双路召回→RRF→Reranker），让"血压高"能精准映射到"高血压"专业文档。基于 Qwen3.5-2B 完成 SFT(40K)→GSPO RL(2.5K) 两阶段训练，VLM 得分 0.58→0.78，盲评 4.5/5 超越通用大模型。',
 ]
 
-export const brandTags: string[] = ['赋范空间', 'AI Agent', 'LangGraph', 'LoRA', 'Full Stack']
+export const brandTags: string[] = ['赋范空间', 'Multi-Agent', 'GSPO RL', 'LoRA', 'RAG', 'Full Stack']
