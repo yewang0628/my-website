@@ -315,6 +315,110 @@ export const projects: Project[] = [
     },
   },
   {
+    title: 'SPA-RL 手机智能助理 — 基于强化学习的长链路任务优化',
+    description:
+      '基于 Stepwise Progress Attribution（SPA）的强化学习框架，解决手机智能助理在电商等场景下长链路任务的稀疏奖励问题。Progress Estimator 将终局奖励分解为每步即时反馈，Grounding Signal 实时校验动作有效性，PPO 策略优化显著提升任务完成率与泛化能力。',
+    tags: ['PPO', 'Step-RL', 'LoRA', 'Qwen3', 'vLLM', 'DeepSpeed'],
+    screenshot: 'spa-rl.svg',
+    githubUrl: 'https://github.com/WangHanLinHenry/SPA-RL-Agent',
+    detail: {
+      background:
+        '现有手机智能助理（如小艺、小爱同学）以单轮指令响应为主，无法自主完成"打开淘宝→搜索商品→比价→加购→下单"这类 8-12 步的长链路任务。传统 SFT 微调的方法缺乏探索能力，面对未见过的场景完成率骤降；直接用 PPO 训练又因奖励稀疏（只有最终下单成功才得分）导致早期动作无学习信号，模型甚至学会刷无效点击来碰运气。',
+      solution: [
+        'Step-RL 框架核心：设计 Progress Estimator（Qwen3-8B + 轻量 MLP）量化每步操作对任务完成的增量贡献，将终局延迟奖励拆解为稠密中间反馈，从根源上解决长时序任务中的 Credit Assignment 问题',
+        'Grounding Signal 机制：执行前实时检测按钮可点击性、元素存在性、页面加载状态，过滤无效操作并融入奖励函数形成惩罚约束，避免模型生成环境中不可执行的动作',
+        'PPO 策略优化：以 SFT 模型为初始策略，融合"进度贡献分(α=0.5) + 动作有效性分(β=0.2)"的加权密集奖励替代传统稀疏信号。KL 散度约束(coef=0.1)防止策略漂移，A100×8 + DeepSpeed ZeRO-3 训练约 1 天',
+        'Planner-Worker 分离架构：Planner 负责任务分解与动作决策（LLM），Worker 负责真实手机上的点击、输入等操作执行，两者通过状态-动作-反馈闭环协作',
+        '安全边界设计：支付前自动暂停等用户确认，用户行为数据仅在本地处理不上传，风险操作日志全量留痕',
+      ],
+      results: [
+        '电商任务完成率 85%→90%（+5pp），动作锚定准确率 96.2%，多轮任务平均完成时长 25s→18s（-28%），用户干预率降至 8%',
+        '跨场景泛化：WebShop / ALFWorld / VirtualHome 三个标准数据集上验证，Step-RL 框架均可复现显著提升',
+        '轨迹质量提升：非法/无效动作比例从 8% 降至 4%（通过规则过滤 + LLM-as-Judge + 保留失败样本三重机制）',
+        '模型部署优化：INT8 量化减少 50% 体积，TTFT 3.2s→1.3s，单卡吞吐 10 QPS，成功率仅降 0.2%',
+      ],
+      metrics: [
+        { label: '任务完成率', value: '90%', desc: '85%→90%' },
+        { label: '动作准确率', value: '96.2%', desc: '元素锚定' },
+        { label: '完成时长', value: '18s', desc: '25s→18s (-28%)' },
+        { label: '干预率', value: '8%', desc: '< 10%目标' },
+        { label: '无效动作', value: '4%', desc: '8%→4%' },
+        { label: 'TTFT', value: '1.3s', desc: '3.2s→1.3s' },
+      ],
+      iterations: [
+        {
+          title: '第一轮迭代：从 SFT 基线到 Step-RL 框架设计',
+          description:
+            '初版采用 Qwen3-8B + LoRA SFT，使用公开数据集(WebShop/ALFWorld/VirtualHome)与内部 1 万+ 条用户日志训练。结果电商任务完成率仅 85%，暴露出三个核心问题：①"搜索结果页"与"商品详情页"界面特征相似，模型误判当前状态导致决策混乱；②页面未加载完就决策"点击加购"，动作不可执行；③训练数据未覆盖的细分需求(如"买可擦除中性笔")完成率骤降至 60% 以下。根源是 SFT 只能模仿训练数据中的操作轨迹，缺乏探索和全局优化能力。',
+          improvements: [
+            {
+              aspect: 'Progress Estimator 设计',
+              before: '只有任务终局奖励（下单成功=1，否则=0），中间 8-12 步零反馈。模型不知道是"搜对了关键词"还是"比价没漏看"起了作用 — 典型的 Credit Assignment 问题',
+              after: 'Qwen3-8B 最后一层 hidden state 接轻量 MLP 回归头，输入整条轨迹状态，输出每步的进度贡献分数。用 5000 条指令 × 5 次交互 = 2.5 万条轨迹训练，约束所有步骤的贡献求和等于最终任务完成度（累计约束保证奖励不偏移）。训练后自动学到"搜对商品 +0.2"、"无效点击 0"、"成功下单 +0.3"',
+              reason: '数据驱动的奖励分解比人工设计 reward shaping 更可靠 — 后者容易引入奖励偏移（模型学会刷中间分而不是完成最终目标）',
+            },
+            {
+              aspect: 'Grounding Signal 动作校验',
+              before: '模型约 8% 的动作在环境中不可执行：按钮已被弹窗遮挡仍尝试点击、搜索关键词为空、在详情页仍执行"搜索"动作',
+              after: '三重过滤机制：①领域规则（如"点击操作必须对应商品列表有效索引"、"加入购物车前必须已进入详情页"）②LLM-as-Judge(DeepSeek/Qwen/GPT 三模型投票)③故意保留部分可执行但低推进的动作作为 Progress Estimator 的负样本',
+              reason: '初期没加 Grounding Signal 时模型学会了点任何可点按钮来刷分(Reward Hacking)。必须同时给"点了有用按钮"奖励和"点了无效按钮"惩罚，策略才学会区分',
+            },
+          ],
+        },
+        {
+          title: '第二轮迭代：RL 训练与奖励平衡调优',
+          description:
+            '将 Step-RL 集成到 PPO 训练中。但初期出现三个问题：①只加 Progress Estimator 时模型倾向可执行但低推进的动作（奖励劫持）；②Progress Estimator + Grounding Signal 联合后，Grounding 权重过高导致模型保守，只点安全按钮不推进任务；③不同任务轨迹长度差异大(3-15 步)，长轨迹等短轨迹造成训练浪费。',
+          improvements: [
+            {
+              aspect: '奖励权重调优 (α, β 网格搜索)',
+              before: '单用 Progress Estimator 导致 Reward Hacking（点任何能点的按钮就得分）；单用 Grounding 导致策略保守（只做最安全但无推进的动作）',
+              after: '三任务各采样 500 条做网格搜索(α∈{0.3,0.5,1.0}, β∈{0.1,0.2,0.4})，最终 α=0.5、β=0.2。α 太大会忽略动作合法性，β 太大会忽略任务推进。reward = 0.5×进度贡献 + 0.2×动作有效性，KL coef=0.1 防止策略漂移',
+              reason: '两者必须同时存在 — Progress Estimator 告诉模型"往哪走"，Grounding Signal 告诉模型"能走哪条路"。单有其一都不够',
+            },
+            {
+              aspect: '轨迹分桶训练 + 数据过滤',
+              before: '一个 batch 内短轨迹(3步)等长轨迹(15步)执行完，GPU 利用率低。原始 1.5 万条数据含大量太简单或太复杂样本',
+              after: '分桶策略：SFT 阶段生成轨迹长度分 4 桶(≤5/5-8/8-12/>12)，同 batch 只含同桶数据。数据过滤：①SFT 模型每条生成 5 回复，全成功或全失败的过滤 ②去对话<3 轮 ③bge-m3 去重(cos>0.9) ④GPT 过滤冗长/死循环/不连贯数据。最终 1.5 万→8000 条高质量 RL 数据',
+              reason: '分桶让 GPU 不空转。数据过滤是 RL 训练的关键 — 坏数据比没有数据更伤害策略学习',
+            },
+            {
+              aspect: 'PPO 训练配置 (A100×8, DeepSpeed ZeRO-3)',
+              before: 'SFT 基线：Qwen3-8B, LoRA r=8/α=16, FP16, A100×8, ~6h',
+              after: 'PPO 训练：SFT checkpoint 初始化 Actor & Reference，Progress Estimator 冻结做 Reward Model。Clip ε=0.2, γ=0.99, KL coef=0.1, lr=1e-6, 3 epochs, A100×8 ~24h。训练后 LoRA merge 得到最终模型',
+              reason: 'PPO 需要维护 Actor/Critic/Reference/Reward 四个模型，DeepSpeed ZeRO-3 分片参数到 8 卡，每卡只需存 1/8 参数',
+            },
+          ],
+        },
+        {
+          title: '第三轮迭代：场景扩展与安全加固',
+          description:
+            '初始仅覆盖 Top 10 电商 APP 的 3 类基础场景（打开页面/商品搜索/跨店比价）。用户实际需求远超此范围，且下单、支付、售后等高风险环节需要安全机制。',
+          improvements: [
+            {
+              aspect: '场景覆盖扩展（10→30 APP，3→全链路场景）',
+              before: '仅覆盖综合电商 Top 10 + 3 类基础操作场景',
+              after: '模块化适配 30 个电商 APP(含直播电商/跨境购物/折扣特卖)，场景从"搜索+比价"拓展至"下单+客服+领券+售后+物流跟踪"全链路。复杂指令支持从 1-2 轮提升至 3+ 轮(可处理库存不足时自动切换规格等分支逻辑)',
+              reason: '模块化适配让新增 APP 成本降低 — 核心交互逻辑复用，仅需配置页面元素差异',
+            },
+            {
+              aspect: '安全边界设计',
+              before: '无安全防护，用户担心自动化操作涉及支付和隐私风险',
+              after: '支付前自动暂停+弹窗告知("即将进入支付环节，涉及资金扣付")→等用户确认→用户手动完成→Agent 继续后续步骤。隐私数据(浏览记录/收货地址)仅本地加密存储，任务结束后自动清除。风险操作日志全量留痕',
+              reason: '支付和隐私是用户接受手机智能助理的最大心理障碍。暂停+确认机制在不牺牲自动化效率的前提下保证了安全底线',
+            },
+            {
+              aspect: '部署优化 (INT8 + vLLM + 前缀缓存)',
+              before: 'FP16 推理，TTFT 3.2s，单卡 QPS 低。多层 Worker 架构复杂，首次请求延迟高',
+              after: 'INT8 量化体积减半，vLLM PagedAttention + Continuous Batching，热门 prompt 前缀缓存复用 KV-Cache。TTFT 3.2s→1.3s，单卡 10 QPS，成功率仅降 0.2%。Nginx 入口限流 + Prefill/Decode 分阶段调度，小请求不被长上下文"绑架"',
+              reason: '手机智能助理对延迟敏感 — 用户说"帮我买牛奶"后等 3 秒和等 1.3 秒的体验差距很大',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     title: 'My Website',
     description:
       '个人品牌站，React 19 + Vite 7 + TypeScript + Tailwind CSS v4 构建，科技粒子风格，支持亮/暗主题切换，GitHub Pages 部署。',
