@@ -1,75 +1,102 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="400" y2="300" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0B0D17"/><stop offset="1" stop-color="#12102A"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="400" y2="300"><stop stop-color="#0B0D17"/><stop offset="1" stop-color="#12102A"/></linearGradient>
     <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#F0B93E"/><stop offset="1" stop-color="#D4931E"/></linearGradient>
     <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#22D3EE"/><stop offset="1" stop-color="#0891B2"/></linearGradient>
     <linearGradient id="purple" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#A78BFA"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
     <linearGradient id="emerald" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#34D399"/><stop offset="1" stop-color="#059669"/></linearGradient>
     <linearGradient id="rose" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#FB7185"/><stop offset="1" stop-color="#E11D48"/></linearGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
 
   <rect width="400" height="300" rx="12" fill="url(#bg)"/>
+  <text x="200" y="15" text-anchor="middle" fill="#6B7280" font-size="9" font-family="monospace">Fin-MCP · Multi-Agent A-Share Analysis</text>
 
-  <!-- Title -->
-  <text x="200" y="18" text-anchor="middle" fill="#9CA3AF" font-size="10" font-family="monospace">Fin-MCP · Multi-Agent Architecture</text>
-
-  <!-- === TOP LAYER: User + Router === -->
-  <rect x="140" y="27" width="120" height="22" rx="6" fill="#1E293B" stroke="#334155" stroke-width="0.8"/>
-  <text x="200" y="42" text-anchor="middle" fill="#E2E8F0" font-size="9" font-family="monospace">User Query</text>
-  <line x1="200" y1="49" x2="200" y2="56" stroke="#475569" stroke-width="0.8"/>
+  <!-- User Query -->
+  <rect x="150" y="22" width="100" height="18" rx="5" fill="#1E293B" stroke="#334155" stroke-width="0.7"/>
+  <text x="200" y="34" text-anchor="middle" fill="#E2E8F0" font-size="7.5" font-family="monospace">User Query</text>
+  <line x1="200" y1="40" x2="200" y2="46" stroke="#475569" stroke-width="0.8"/>
 
   <!-- Router -->
-  <rect x="155" y="56" width="90" height="20" rx="5" fill="url(#gold)" opacity="0.85"/>
-  <text x="200" y="70" text-anchor="middle" fill="#0B0D17" font-size="8" font-weight="bold" font-family="monospace">Router</text>
+  <rect x="155" y="46" width="90" height="18" rx="5" fill="url(#gold)" opacity="0.88"/>
+  <text x="200" y="59" text-anchor="middle" fill="#0B0D17" font-size="7.5" font-weight="bold" font-family="monospace">Router</text>
+  <line x1="200" y1="64" x2="200" y2="71" stroke="#F0B93E" stroke-width="0.8"/>
 
-  <line x1="200" y1="76" x2="200" y2="85" stroke="#F0B93E" stroke-width="1" opacity="0.5"/>
+  <!-- Head Agent -->
+  <rect x="128" y="71" width="144" height="20" rx="5" fill="#1E293B" stroke="#F0B93E" stroke-width="0.8"/>
+  <text x="200" y="85" text-anchor="middle" fill="#F0B93E" font-size="8" font-family="monospace">Head Agent · Planner</text>
 
-  <!-- === HEAD AGENT === -->
-  <rect x="140" y="85" width="120" height="22" rx="5" fill="#1E293B" stroke="#F0B93E" stroke-width="0.8"/>
-  <text x="200" y="100" text-anchor="middle" fill="#F0B93E" font-size="8" font-family="monospace">Head Agent · Planner</text>
+  <!-- Fan-out tree -->
+  <line x1="200" y1="91" x2="200" y2="95" stroke="#F0B93E" stroke-width="0.8"/>
+  <line x1="50" y1="95" x2="350" y2="95" stroke="#475569" stroke-width="0.5" opacity="0.45"/>
+  <line x1="55" y1="95" x2="55" y2="102" stroke="#475569" stroke-width="0.5" opacity="0.4"/>
+  <line x1="152" y1="95" x2="152" y2="102" stroke="#475569" stroke-width="0.5" opacity="0.4"/>
+  <line x1="248" y1="95" x2="248" y2="102" stroke="#475569" stroke-width="0.5" opacity="0.4"/>
+  <line x1="345" y1="95" x2="345" y2="102" stroke="#475569" stroke-width="0.5" opacity="0.4"/>
 
-  <!-- Fan-out lines -->
-  <line x1="105" y1="107" x2="75" y2="120" stroke="#22D3EE" stroke-width="0.8" opacity="0.4"/>
-  <line x1="175" y1="107" x2="140" y2="120" stroke="#A78BFA" stroke-width="0.8" opacity="0.4"/>
-  <line x1="225" y1="107" x2="260" y2="120" stroke="#34D399" stroke-width="0.8" opacity="0.4"/>
-  <line x1="295" y1="107" x2="325" y2="120" stroke="#FB7185" stroke-width="0.8" opacity="0.4"/>
+  <!-- === 4 AGENTS IN 1 ROW === -->
+  <rect x="8" y="102" width="90" height="24" rx="6" fill="url(#cyan)" opacity="0.85"/>
+  <text x="53" y="118" text-anchor="middle" fill="#0B0D17" font-size="7.2" font-weight="bold" font-family="monospace">Fundamental</text>
 
-  <!-- === 4 WORK AGENTS === -->
-  <rect x="20" y="120" width="110" height="20" rx="5" fill="url(#cyan)" opacity="0.82"/>
-  <text x="75" y="134" text-anchor="middle" fill="#0B0D17" font-size="7.5" font-weight="bold" font-family="monospace">Fundamental</text>
+  <rect x="102" y="102" width="90" height="24" rx="6" fill="url(#purple)" opacity="0.85"/>
+  <text x="147" y="118" text-anchor="middle" fill="#fff" font-size="7.2" font-weight="bold" font-family="monospace">Technical</text>
 
-  <rect x="20" y="143" width="110" height="20" rx="5" fill="url(#purple)" opacity="0.82"/>
-  <text x="75" y="157" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="monospace">Technical</text>
+  <rect x="196" y="102" width="90" height="24" rx="6" fill="url(#emerald)" opacity="0.85"/>
+  <text x="241" y="118" text-anchor="middle" fill="#0B0D17" font-size="7.2" font-weight="bold" font-family="monospace">Valuation</text>
 
-  <rect x="145" y="120" width="110" height="20" rx="5" fill="url(#emerald)" opacity="0.82"/>
-  <text x="200" y="134" text-anchor="middle" fill="#0B0D17" font-size="7.5" font-weight="bold" font-family="monospace">Valuation</text>
+  <rect x="290" y="102" width="98" height="24" rx="6" fill="url(#rose)" opacity="0.85"/>
+  <text x="339" y="118" text-anchor="middle" fill="#fff" font-size="7.2" font-weight="bold" font-family="monospace">News</text>
 
-  <rect x="145" y="143" width="110" height="20" rx="5" fill="url(#rose)" opacity="0.82"/>
-  <text x="200" y="157" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="monospace">News</text>
+  <!-- Sub-labels -->
+  <text x="53" y="134" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">财务·偿债·盈利</text>
+  <text x="147" y="134" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">K线·MACD·量价</text>
+  <text x="241" y="134" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">PE·PB·DCF·PEG</text>
+  <text x="339" y="134" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">爬虫·情感·风险</text>
 
-  <!-- Small model labels -->
-  <text x="75" y="173" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">ReAct + MCP Tools</text>
-  <text x="200" y="173" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">Qwen3-1.7B LoRA ×2</text>
+  <!-- MCP tools bar -->
+  <rect x="8" y="142" width="384" height="15" rx="4" fill="#0F1225" stroke="#1E293B" stroke-width="0.4"/>
+  <text x="200" y="153" text-anchor="middle" fill="#475569" font-size="5.5" font-family="monospace">MCP Server (27 tools) · vLLM · AKShare · Baostock · Redis · Mem0</text>
 
-  <!-- Fan-in to synthesizer -->
-  <line x1="75" y1="176" x2="200" y2="188" stroke="#475569" stroke-width="0.6" opacity="0.3"/>
-  <line x1="200" y1="176" x2="200" y2="188" stroke="#475569" stroke-width="0.6" opacity="0.3"/>
+  <!-- Fan-in tree -->
+  <line x1="53" y1="157" x2="53" y2="163" stroke="#475569" stroke-width="0.5" opacity="0.35"/>
+  <line x1="147" y1="157" x2="147" y2="163" stroke="#475569" stroke-width="0.5" opacity="0.35"/>
+  <line x1="241" y1="157" x2="241" y2="163" stroke="#475569" stroke-width="0.5" opacity="0.35"/>
+  <line x1="339" y1="157" x2="339" y2="163" stroke="#475569" stroke-width="0.5" opacity="0.35"/>
+  <line x1="53" y1="163" x2="339" y2="163" stroke="#475569" stroke-width="0.4" opacity="0.3"/>
+  <line x1="200" y1="163" x2="200" y2="169" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
 
   <!-- Synthesizer -->
-  <rect x="140" y="188" width="120" height="20" rx="5" fill="url(#gold)" opacity="0.75"/>
-  <text x="200" y="202" text-anchor="middle" fill="#0B0D17" font-size="8" font-weight="bold" font-family="monospace">Synthesizer</text>
-
-  <line x1="200" y1="208" x2="200" y2="216" stroke="#F0B93E" stroke-width="0.8" opacity="0.5"/>
+  <rect x="125" y="169" width="150" height="20" rx="5" fill="url(#gold)" opacity="0.88"/>
+  <text x="200" y="183" text-anchor="middle" fill="#0B0D17" font-size="7.5" font-weight="bold" font-family="monospace">Summary · Synthesizer</text>
+  <line x1="200" y1="189" x2="200" y2="195" stroke="#F0B93E" stroke-width="0.8"/>
 
   <!-- Output -->
-  <rect x="140" y="216" width="120" height="18" rx="5" fill="#1E293B" stroke="#334155" stroke-width="0.8"/>
-  <text x="200" y="228" text-anchor="middle" fill="#E2E8F0" font-size="7.5" font-family="monospace">Markdown Report</text>
+  <rect x="135" y="195" width="130" height="18" rx="5" fill="#1E293B" stroke="#334155" stroke-width="0.7"/>
+  <text x="200" y="207" text-anchor="middle" fill="#E2E8F0" font-size="7" font-family="monospace">Markdown Report</text>
 
-  <!-- === INFRASTRUCTURE LAYER === -->
-  <rect x="8" y="248" width="384" height="46" rx="8" fill="#0F1225" stroke="#1E293B" stroke-width="0.8"/>
-  <text x="200" y="262" text-anchor="middle" fill="#6B7280" font-size="7" font-family="monospace">MCP Server (27 tools) · vLLM Fin-R1 7B · Milvus RAG · 5-Layer Security · Redis + Mem0</text>
-  <text x="200" y="278" text-anchor="middle" fill="#475569" font-size="6.5" font-family="monospace">5529 Company Aliases · 1150+ Security Lexicon · 218 Audit Rules · 1022 QA Pairs</text>
+  <!-- === BOTTOM: 4 TECH PANELS === -->
+  <rect x="8" y="223" width="384" height="70" rx="7" fill="#0C1222" stroke="#1E293B" stroke-width="0.6"/>
+
+  <rect x="14" y="229" width="90" height="58" rx="4" fill="#0F1A2A" stroke="#1E293B" stroke-width="0.4"/>
+  <text x="59" y="247" text-anchor="middle" fill="#22D3EE" font-size="6.5" font-family="monospace">Fin-R1 7B</text>
+  <text x="59" y="261" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">SFT + GRPO</text>
+  <text x="59" y="273" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">Score 75.2</text>
+  <text x="59" y="283" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">95× faster</text>
+
+  <rect x="108" y="229" width="90" height="58" rx="4" fill="#0F1A2A" stroke="#1E293B" stroke-width="0.4"/>
+  <text x="153" y="247" text-anchor="middle" fill="#A78BFA" font-size="6.5" font-family="monospace">Qwen3-1.7B×2</text>
+  <text x="153" y="261" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">Sentiment 91.2%</text>
+  <text x="153" y="273" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">Risk 88.4%</text>
+  <text x="153" y="283" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">LoRA Focal Loss</text>
+
+  <rect x="202" y="229" width="90" height="58" rx="4" fill="#0F1A2A" stroke="#1E293B" stroke-width="0.4"/>
+  <text x="247" y="247" text-anchor="middle" fill="#34D399" font-size="6.5" font-family="monospace">RAG · Milvus</text>
+  <text x="247" y="261" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">bge-large-zh</text>
+  <text x="247" y="273" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">1022 QA Pairs</text>
+  <text x="247" y="283" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">HyDE + RRF</text>
+
+  <rect x="296" y="229" width="90" height="58" rx="4" fill="#0F1A2A" stroke="#1E293B" stroke-width="0.4"/>
+  <text x="341" y="247" text-anchor="middle" fill="#FB7185" font-size="6.5" font-family="monospace">Security + Mem</text>
+  <text x="341" y="261" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">5-Layer Guard</text>
+  <text x="341" y="273" text-anchor="middle" fill="#475569" font-size="5.2" font-family="monospace">218 Rules</text>
+  <text x="341" y="283" text-anchor="middle" fill="#475569" font-size="5" font-family="monospace">Redis · Mem0</text>
 </svg>
