@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://wangye.github.io/my-website/sitemap.xml
+Sitemap: https://yewang0628.github.io/my-website/sitemap.xml
