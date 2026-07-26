@@ -11,8 +11,19 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
   const showPlaceholder = !project.screenshot || imgError
   const isClickable = !!project.detail
 
-  const cardContent = (
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault()
+      onClick()
+    }
+  }
+
+  return (
     <div
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onClick={isClickable ? onClick : undefined}
+      onKeyDown={isClickable ? handleKeyDown : undefined}
       className={`group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white/80 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800/80 dark:hover:shadow-cyan-500/20 ${
         isClickable ? 'cursor-pointer' : ''
       }`}
@@ -91,19 +102,4 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
       </div>
     </div>
   )
-
-  if (isClickable && onClick) {
-    return (
-      <button
-        type="button"
-        className="w-full text-left"
-        onClick={onClick}
-        style={{ background: 'none', border: 'none', padding: 0 }}
-      >
-        {cardContent}
-      </button>
-    )
-  }
-
-  return cardContent
 }
