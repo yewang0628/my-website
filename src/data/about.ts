@@ -4,4 +4,4 @@ export const bioParagraphs: string[] = [
   '主导开发了 MediX 多智能体医疗助手，采用自研 Skills-Agent 双层架构（7 原子 Skills + 3 专业 Agent 解耦协作）。自建 5 步混合检索管线（KG 扩展→HyDE→双路召回→RRF→Reranker），让"血压高"能精准映射到"高血压"专业文档。基于 Qwen3.5-2B 完成 SFT(40K)→GSPO RL(2.5K) 两阶段训练，VLM 得分 0.58→0.78，盲评 4.5/5 超越通用大模型。',
 ]
 
-export const brandTags: string[] = ['赋范空间', 'Multi-Agent', 'GSPO RL', 'LoRA', 'RAG', 'Full Stack']
+export const brandTags: string[] = ['Multi-Agent', 'Skills-Agent', 'SFT + GSPO', 'LoRA', 'Hybrid RAG', 'Full Stack']
