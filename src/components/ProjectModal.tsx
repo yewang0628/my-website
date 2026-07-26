@@ -62,6 +62,25 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
           ))}
         </div>
 
+        {/* Metrics Bar */}
+        {detail.metrics && detail.metrics.length > 0 && (
+          <div className="mb-6 grid grid-cols-3 gap-2 rounded-xl bg-gradient-to-r from-purple-50 to-cyan-50 p-4 dark:from-purple-950/30 dark:to-cyan-950/30 md:grid-cols-6">
+            {detail.metrics.map((m) => (
+              <div key={m.label} className="text-center">
+                <div className="text-lg font-bold text-purple-700 dark:text-cyan-400">
+                  {m.value}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-500">
+                  {m.label}
+                </div>
+                <div className="text-[10px] text-gray-400 dark:text-gray-600">
+                  {m.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Background */}
         <section className="mb-6">
           <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
