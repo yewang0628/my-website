@@ -88,6 +88,12 @@ export const projects: Project[] = [
               after: '单次分析约 ¥0.12（工具 token 81,000 + LLM 输出 15,500），月 300 次约 ¥36（-23%）',
               reason: '三项优化叠加：循环限制减少无效轮次 + 重复检测减少浪费 + 成本标注引导轻量优先',
             },
+            {
+              aspect: '公司别名匹配（5 阶段递进管道）',
+              before: '用户输入口语化公司名（"茅台""宁王""BYD""603871"），直接文本匹配准确率低，歧义消解困难（如"隆基"→隆基绿能 vs 隆基机械）',
+              after: 'Stage1 股票代码直查(score=1.0) → Stage2 倒排索引精确别名(19496 key, score=0.95) → Stage3 子串匹配(长度比分, 0.7~0.95) → Stage4 difflib.SequenceMatcher 模糊匹配 → Stage5 正则提取("分析XXX"模式, score=0.3)。三级复合排序：70只优先股 > 匹配分数 > 别名数量',
+              reason: '5529 家公司 × 多别名(全称/简称/英文/品牌/旧称) → 19496 个倒排索引 key。优先级让茅台/宁德等大票在歧义匹配中自动胜出',
+            },
           ],
         },
         {
@@ -112,6 +118,12 @@ export const projects: Project[] = [
               before: '无安全防护，LLM 输出直接展示给用户',
               after: '①输入守卫(1150+金融安全词库) → ②输出审核(218条审计规则,7类) → ③工具白名单(30+只读模式) → ④检查点管理(溯源回放) → ⑤SecurityContext(统一包装+自动免责)。动作：block 拦截 / rewrite 重写 / flag 标注 / retry 重生成(最多3次)',
               reason: '金融领域合规要求高。全本地实现（零外部依赖），审核规则覆盖投资建议合规/数值范围/信息披露/市场公平性/监管要求 7 个类别',
+            },
+            {
+              aspect: '兜底链 (4 级 Fallback)',
+              before: '工具超时或数据不可用时，Agent 直接报错或返回空结果，用户体验差',
+              after: 'MCP 工具(优先) → RAG 知识库(数据不足补充) → LLM 通用知识(RAG无匹配兜底) → 优雅降级提示("部分数据不可用，建议缩小查询范围或稍后重试")。每级失败自动 fallback，`_build_fallback_result` 构造带建议的友好降级文本',
+              reason: '面向投资者的产品不能暴露技术错误细节。4 级降级确保任何情况下都有可读输出',
             },
             {
               aspect: 'Head Agent 冲突裁决',
@@ -143,6 +155,18 @@ export const projects: Project[] = [
               before: '每次会话独立，无法利用历史分析经验',
               after: '会话结束 → LLM 提取元知识（偏好/方法/教训）→ embed → Mem0/JSON 存储。过滤规则：只存"怎么分析"（如"该用户偏好DCF估值"），不存"分析出什么"（如"茅台昨天跌了2%"）。新会话 → Top-3 检索 → 注入 System Prompt',
               reason: '金融场景时效性极强。记住用户的"分析方法偏好"有价值，记住"历史股价"反而会误导下一次分析',
+            },
+            {
+              aspect: '三级检索降级 + 数据结构强制过滤',
+              before: 'Mem0 不可用时长期记忆完全失效，无降级方案；元知识提取完全依赖 LLM prompt 约束，规则降级粗糙',
+              after: '①Mem0 向量检索(最优) → ②本地 Embedder + numpy.dot 余弦相似度(次优) → ③关键词打分(preferences匹配+3, domain/code匹配+2)。SessionSummary dataclass 字段层面强制过滤：只有 user_preferences/methodology/mistakes/stocks 四个字段，无任何价格/财务数字 slot。正则降级兜底：re.findall 从消息中提取股票名+主题',
+              reason: '数据结构强约束 + 运行时三级降级 = 双重保障。"存什么"由 Schema 决定而非靠 prompt 约束，这是最可靠的过滤',
+            },
+            {
+              aspect: 'Skills 插件架构',
+              before: 'RAG 功能与 Agent 代码硬耦合，新增能力需修改所有 Agent',
+              after: 'pkgutil.walk_packages 扫描 src/skills/ → importlib 按需加载 → 提取 SKILL 对象 → 注册为 LangChain Tool → 注入所有 Agent。新增 Skill 只需在目录加一个 .py 文件。40+ trigger_keywords 匹配 + LLM 渐进式披露 tool description',
+              reason: '"本质是规则+RAG检索"的模块应独立封装。Skill 架构让 Agent 和能力解耦，改 RAG 逻辑不影响 Agent 代码',
             },
             {
               aspect: '容量规划与瓶颈分析',
