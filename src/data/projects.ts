@@ -180,6 +180,123 @@ export const projects: Project[] = [
     },
   },
   {
+    title: 'MediX — 多智能体医疗助手',
+    description:
+      'Skills-Agent 双层架构的医疗 AI 系统。3 个专业 Agent + 7 个原子 Skills 解耦协作，ReAct Loop 自主调用工具（硬限3次），Swarm 智能路由（70%单Agent/30%协作），双层记忆（MD5去重+Mem0），约束系统自动修复输出。',
+    tags: ['LangGraph', 'ReAct', 'Mem0', 'LoRA', 'DAPO', 'vLLM', 'Milvus'],
+    screenshot: 'medix.svg',
+    githubUrl: 'https://github.com/yewang0628/MediX',
+    detail: {
+      background:
+        '传统单 Agent 医疗问答存在响应慢、复杂问题分析不全、多轮对话上下文理解弱等问题。面对多症状、多维度的医疗咨询时，准确性与稳定性不足，缺乏长效记忆机制，难以满足实际医疗场景的需求。',
+      solution: [
+        'Skills-Agent 两层架构：底层 7 个原子 Skills（知识检索/风险评估/症状分析/生活方式/ICD-10编码/临床指南/深度研究），上层 3 个专业 Agent（健康咨询/症状诊断/医学研究）按需调用，Skills 与 Agent 完全解耦',
+        'Agent Loop 执行机制：基于 ReAct 实现 Think-Act-Observe 循环，LLM 自主决策工具调用并观察结果，硬性限制最多 3 次工具调用（防过度调用），单 Agent 响应时间控制在 15 秒以内',
+        'Swarm 协作系统：LeadAgent 判断问题复杂度并分解任务，智能路由 70% 单 Agent 快速通道 / 30% Swarm 协作模式，Agent 间通过 SharedContext 间接共享任务状态和执行结果',
+        '双层记忆机制：短期记忆管理会话级对话历史（单例模式共享上下文，MD5 去重 + 超限压缩 35%，加载最近 5 轮），长期记忆通过 Mem0 云服务向量化存储会话总结，支持跨会话相似案例检索',
+        'Harness Engineering 约束系统：YAML 显式定义 Agent 能力边界并运行时验证，输出自动修复（缺少免责声明自动添加、高危症状自动附加就医警告）',
+        'VLM 模型训练：Qwen3.5-2B SFT（40K 医学 VQA）+ DAPO RL（2.5K），级联 Reward（Embed 双阈值过滤 + LLM Judge 三档），chat_template 修复确保格式学习，RTX 5070 12GB 单卡完成',
+      ],
+      results: [
+        '路由准确率 88%→95%，知识库检索准确率 87%，单 Agent 5–15s，Swarm 20–30s，多轮对话理解准确率 60%→92%',
+        '医学专业人员三维度盲评：系统 4.5 分 vs doubao-seed-2.0-pro 3.9 分',
+        'VLM 平均得分 0.58→0.78（+34%），AB test 0.78 vs DeepSeek 0.72 / Doubao 0.75，推理 2–5s/次，可用性 99.8%',
+        '约束系统自动修复率 100%（免责声明/就医警告零遗漏），格式完整率 100%，主力模态识别 90–100%',
+      ],
+      metrics: [
+        { label: '路由准确率', value: '95%', desc: '88%→95%' },
+        { label: '多轮理解', value: '92%', desc: '60%→92%' },
+        { label: '盲评得分', value: '4.5', desc: 'vs doubao 3.9' },
+        { label: 'VLM得分', value: '0.78', desc: '基座 0.58' },
+        { label: '单Agent', value: '5-15s', desc: '硬限3次工具' },
+        { label: '可用性', value: '99.8%', desc: 'vLLM部署' },
+      ],
+      iterations: [
+        {
+          title: '第一轮迭代：Skills-Agent 架构 + ReAct Loop',
+          description:
+            '初版为单 Agent 直接调用工具，Prompt 过长导致指令遵循下降，工具调用无节制（可无限循环），响应时间不稳定（5–45s），且新增能力需修改所有 Agent 代码。',
+          improvements: [
+            {
+              aspect: 'Skills-Agent 解耦架构',
+              before: '工具逻辑与 Agent 代码硬耦合，新增一个能力（如 ICD-10 编码）需修改 3 个 Agent',
+              after: '7 个原子 Skills 独立封装（每个含 SKILL.md + Python 脚本），pkgutil 自动发现 → importlib 按需加载 → 注册为 OpenAI Function Tool。Agent 只关心"调用哪个 Skill"，不关心 Skill 内部实现',
+              reason: '医疗领域知识更新频繁（指南/编码/研究），Skill 架构让知识更新无需改动 Agent 代码',
+            },
+            {
+              aspect: 'ReAct Loop + 硬性工具限制',
+              before: 'Agent 无工具调用上限，复杂问题可能调用 8–10 次，响应 30–45s',
+              after: 'max_tool_calls=2（后调至 3），到达硬限后自动注入"请基于已有信息提供最终答复"，强制 LLM 输出最终答案。流式推理时 DFA 状态机实时过滤 <think> 标签',
+              reason: '医学场景中前 2–3 次检索已覆盖核心信息，更多调用边际收益递减。StreamThinkFilter 用字符级状态机处理跨 token 边界的标签',
+            },
+            {
+              aspect: '消息去重 + 熵压缩',
+              before: '对话历史无管理，相同 tool result 重复存储，上下文膨胀',
+              after: 'MD5 去重（role:content[:200] 取 hash）→ 超限压缩（消息 >12 条时保留 system prompt + 最近 6 条，中间用规则摘要替代）。压缩率约 35%',
+              reason: 'vLLM 4096 context 限制下，每条消息都宝贵。规则压缩比 LLM 压缩更快且确定性更强',
+            },
+          ],
+        },
+        {
+          title: '第二轮迭代：Swarm 协作 + 智能路由 + 双模型架构',
+          description:
+            '单 Agent 对复杂多症状问题分析不全面，无法同时兼顾诊断、指南检索和生活建议。所有请求走同一 LLM 造成简单问题也要等待模型推理。',
+          improvements: [
+            {
+              aspect: 'LeadAgent 智能路由（3 策略）',
+              before: '所有问题走单一 Agent，感冒咨询和复杂鉴别诊断用同一流程',
+              after: '策略1(简单→ConsultationAgent,~70%)：单一常见症状/健康科普。策略2(复杂症状→Diagnostic+Consultation,~20%)：多症状组合/持续加重。策略3(需指南→Research+Consultation,~10%)：询问治疗方案/需要权威证据。LeadAgent 用 DeepSeek V4 Pro 做任务分解',
+              reason: '70% 的问题都是简单咨询（"感冒了怎么办"），走单 Agent 快通道节省 LLM 调用和推理时间',
+            },
+            {
+              aspect: '双模型架构（Lead vs Worker）',
+              before: '所有 Agent 用同一个 LLM，任务分解和医学推理抢同一推理资源',
+              after: 'LeadAgent → DeepSeek V4 Pro (API, 负责任务分解/分配/汇总)。3 个 Worker Agent → 本地 RL 训练医学模型 (vLLM, 负责医学检索/诊断/咨询)。Worker 池通过 SwarmCoordinator 统一管理，短期记忆注入所有 Worker 的 Loop',
+              reason: '分而治之：任务分解需要强推理（API 模型），医学回答需要领域知识（本地专用模型）。双模型各司其职',
+            },
+            {
+              aspect: 'SharedContext 间接通信',
+              before: 'Agent 间无通信机制，多 Agent 结果各自独立无法交叉验证',
+              after: 'LeadAgent 分解任务→发布 SubTask 到 SharedContext→Worker 自主认领→完成后 write 结果→其他 Worker 可 read 上下文。asyncio.Lock 保护并发写入。发布 Swarm 启动/完成事件',
+              reason: '间接通信避免 Agent 间强耦合。Worker 只通过 SharedContext 感知其他 Agent 的存在，不直接调用',
+            },
+          ],
+        },
+        {
+          title: '第三轮迭代：VLM 训练管线 + 约束系统',
+          description:
+            '通用 LLM 缺乏医学影像理解能力，输出质量不稳定（遗漏免责声明、缺少就医警告），需要自训 VLM 并建立输出质量保障体系。',
+          improvements: [
+            {
+              aspect: 'Qwen3.5-2B SFT→DAPO RL 两阶段训练',
+              before: '通用模型医学 VQA 平均得分 0.58，无 CoT 推理能力，格式输出不稳定',
+              after: 'Stage1 SFT：40K 医学 VQA（16 模态，48K 全量采样 7K）+ DeepSeek Flash 生成 CoT 推理链（分 3 档复杂度），3 epochs。Stage2 DAPO RL：2.5K 样本，8 generations/prompt，级联 Reward（Embed 双阈值 0.45/0.85 过滤 + LLM Judge 三档 EQUIVALENT/PARTIAL/DIFFERENT），beta=0.01 KL 约束，2250 steps ~12.5h',
+              reason: 'Embed 双阈值过滤 ~70% 明确样本不调 API，大幅降低 Judge 成本。chat_template 修复是关键（Qwen3.5 原生模板会丢弃 <MODALITY> 前缀，修复后格式才真正生效）',
+            },
+            {
+              aspect: 'Reward 设计演进（v1→v2）',
+              before: 'v1: 4 个 reward 平行加权（format/llm/embed/modality），LLM Judge 二元 YES/NO 每条都调 API，Modality 恒为 0（chat_template bug）',
+              after: 'v2: 级联 reward = 0.10×format + 0.90×content。content = 0.05×modality + 0.375×embed_sim + 0.575×llm_judge。Format 3-tier 渐进（有MOD→有think→完整）。Embed 双阈值快速过滤 + LLM Judge 仅 ~30% 样本调 API',
+              reason: 'v1 每条都调 Judge API，2.5K×8=20K 次调用，成本高且噪音大。v2 Embed 预判后仅 ~6K 次 API 调用',
+            },
+            {
+              aspect: 'DAPO 训练踩坑与调优',
+              before: '初始配置：num_generations=4, temperature=0.8, beta=0.04, cascaded reward',
+              after: 'num_generations 4→8（GSPO advantage 方差为0→梯度死掉）；temperature 0.8→1.2（entropy 过低）；beta 0.04→0.01（约束过强→策略不更新）；cascaded→并行加权（低阈值默认满分→reward 过早饱和）。RLMonitorCallback 三级监控：紧急熔断(entropy<0.3)/收敛停车/预警',
+              reason: 'RL 训练的"玄学"时刻：num_generations=4 时 advantage 方差为零完全无梯度，提到 8 才解决。这些踩坑经验本身就是工程能力的体现',
+            },
+            {
+              aspect: 'Harness Engineering 约束系统',
+              before: 'LLM 输出无质量保障，约 15% 的回答缺少免责声明，高危症状（如"胸痛伴呼吸困难"）未触发就医警告',
+              after: 'YAML 定义 Agent 能力边界（可用 Skills 列表/禁止操作/输出规范）→ 运行时 agent_loop 每个 tool_call 前验证 → 输出后 auto_fix（缺失免责声明自动追加、检测到高危症状关键词自动插入就医警告）。修复率 100%',
+              reason: '医疗场景的合规底线。约束系统与 Agent 代码完全解耦，修改约束不需要重新部署 Agent',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     title: 'My Website',
     description:
       '个人品牌站，React 19 + Vite 7 + TypeScript + Tailwind CSS v4 构建，科技粒子风格，支持亮/暗主题切换，GitHub Pages 部署。',
